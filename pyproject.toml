@@ -10,6 +10,9 @@ python = "^3.11"
 aiogram = "^3.1.1"
 motor = "^3.3.1"
 pydantic-settings = "^2.0.3"
+aiohttp = "^3.8.6"
+aiolimiter = "^1.1.0"
+aiodns = "^3.1.1"
 
 
 [tool.poetry.group.dev.dependencies]

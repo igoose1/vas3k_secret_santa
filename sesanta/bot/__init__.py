@@ -1,3 +1,5 @@
+import typing
+
 from aiogram import Bot as AiogramBot
 from aiogram import Dispatcher
 
@@ -14,6 +16,9 @@ class Bot:
         self.dispatcher.include_routers(
             start_router,
         )
+
+    def add_dependency(self, name: str, dependency: typing.Any) -> None:
+        self.dispatcher[name] = dependency
 
     async def start(self) -> None:
         await self.dispatcher.start_polling(self.bot)
