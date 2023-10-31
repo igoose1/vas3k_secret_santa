@@ -1,0 +1,17 @@
+__pycache__/
+*.pyc
+
+*.isorted
+
+.env
+.venv
+venv
+
+*.db
+*.db-wal
+*.db-shm
+
+*.session
+*.session-journal
+
+/dist/
