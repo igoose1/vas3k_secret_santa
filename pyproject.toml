@@ -13,6 +13,7 @@ pydantic-settings = "^2.0.3"
 aiohttp = "^3.8.6"
 aiolimiter = "^1.1.0"
 aiodns = "^3.1.1"
+aiorun = "^2023.7.2"
 
 
 [tool.poetry.group.dev.dependencies]
@@ -22,6 +23,10 @@ pyright = "^1.1.332"
 pre-commit = "^3.5.0"
 pytest = "^7.4.2"
 isort = "^5.12.0"
+
+
+[tool.isort]
+profile = "black"
 
 
 [tool.ruff]

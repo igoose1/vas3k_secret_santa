@@ -3,7 +3,7 @@ import typing
 from aiogram import Bot as AiogramBot
 from aiogram import Dispatcher
 
-from sesanta.bot.handlers import start_router
+from sesanta.bot.handlers import router
 
 
 class Bot:
@@ -13,9 +13,7 @@ class Bot:
         self.populate_handlers()
 
     def populate_handlers(self) -> None:
-        self.dispatcher.include_routers(
-            start_router,
-        )
+        self.dispatcher.include_router(router)
 
     def add_dependency(self, name: str, dependency: typing.Any) -> None:
         self.dispatcher[name] = dependency

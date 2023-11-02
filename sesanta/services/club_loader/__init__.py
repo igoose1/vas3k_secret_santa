@@ -1,4 +1,5 @@
 import datetime
+import functools
 import string
 
 import aiohttp
@@ -31,8 +32,10 @@ class ClubMemberLoader:
         token: str,
         max_rate_per_minute: float,
     ):
-        self.session = aiohttp.ClientSession()
-        self.session.cookie_jar.update_cookies({"token": token})
+        self.session_launcher = functools.partial(
+            aiohttp.ClientSession,
+            cookies={"token": token},
+        )
         endpoint = endpoint.rstrip("/")
         self.url_template = string.Template(f"{endpoint}/$id.json")
         self.limiter = aiolimiter.AsyncLimiter(
@@ -43,10 +46,11 @@ class ClubMemberLoader:
     async def __call__(self, telegram_id: int) -> ClubMember:
         url = self.url_template.safe_substitute({"id": telegram_id})
         adapter = pydantic.TypeAdapter(ClubMemberBody)
-        async with self.limiter, self.session.get(url) as response:
-            text = await response.text()
-            if not response.ok:
-                msg = f'Club returned {response.status} status, text: "{text}"'
-                raise ClubMemberNotFoundError(msg)
-        validated = adapter.validate_json(text)
+        async with self.session_launcher() as session:
+            async with self.limiter, session.get(url) as response:
+                text = await response.text()
+                if not response.ok:
+                    msg = f'Club returned {response.status} status, text: "{text}"'
+                    raise ClubMemberNotFoundError(msg)
+            validated = adapter.validate_json(text)
         return validated["user"]
