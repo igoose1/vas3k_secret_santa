@@ -5,6 +5,7 @@ from motor.motor_asyncio import AsyncIOMotorDatabase
 from sesanta.services.user_getter import UserGetter
 
 
-class IsAuthenticatedFilter(Filter):
+class IsEligibleFilter(Filter):
     async def __call__(self, message: Message, db: AsyncIOMotorDatabase) -> bool:
-        return bool(await UserGetter(db)(message.chat.id))
+        user = await UserGetter(db)(message.chat.id)
+        return user is not None and user.is_eligible

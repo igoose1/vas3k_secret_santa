@@ -3,23 +3,24 @@ from aiogram.filters import Command
 from aiogram.types import Message
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
-from sesanta.services.club_loader import ClubMemberLoader, ClubMemberNotFoundError
-from sesanta.services.user_creator import UserUpdater
+from sesanta.bot.filters import IsAuthenticatedFilter
+from sesanta.services.user_eligibility_setter import UserEligibilitySetter
+from sesanta.services.user_is_eligible import IsUserEligible
 
 router = Router(name="authenticate")
 
 
-@router.message(Command("auth"))
+@router.message(Command("auth"), IsAuthenticatedFilter())
 async def handler(
     message: Message,
     db: AsyncIOMotorDatabase,
-    club_member_loader: ClubMemberLoader,
 ) -> None:
-    telegram_id = message.chat.id
-    try:
-        member = await club_member_loader(telegram_id)
-    except ClubMemberNotFoundError:
-        await message.reply("He нашли тебя в клубе. Проверь, привязан ли бот.")
-        return
-    await message.reply(f"Привет, {member.full_name}!")
-    await UserUpdater(db)(telegram_id, member)
+    passed_criteria = await IsUserEligible(db).check_criteria(message.chat.id)
+    if passed_criteria:
+        await message.reply("Подходишь по критериям!")
+        await UserEligibilitySetter(db).users.set_eligibility(
+            message.chat.id,
+            is_eligible=True,
+        )
+    else:
+        await message.reply("He подходишь!")
