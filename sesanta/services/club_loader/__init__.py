@@ -14,7 +14,6 @@ class ClubMember(pydantic.BaseModel):
     upvotes: int
     created_at: datetime.datetime
     membership_expires_at: datetime.datetime
-    country: str
 
 
 class ClubMemberBody(TypedDict):

@@ -3,8 +3,8 @@ from aiogram.filters import Command
 from aiogram.types import Message
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
-from sesanta.db.collections.users import UserCollection
 from sesanta.services.club_loader import ClubMemberLoader, ClubMemberNotFoundError
+from sesanta.services.user_creator import UserUpdater
 
 router = Router(name="authenticate")
 
@@ -15,11 +15,11 @@ async def handler(
     db: AsyncIOMotorDatabase,
     club_member_loader: ClubMemberLoader,
 ) -> None:
-    UserCollection(db)
     telegram_id = message.chat.id
     try:
         member = await club_member_loader(telegram_id)
     except ClubMemberNotFoundError:
-        await message.reply("увы")
+        await message.reply("He нашли тебя в клубе. Проверь, привязан ли бот.")
         return
     await message.reply(f"Привет, {member.full_name}!")
+    await UserUpdater(db)(telegram_id, member)

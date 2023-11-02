@@ -40,4 +40,6 @@ class ObjectIdPydanticAnnotation:
 
 
 class AbstractSchema(pydantic.BaseModel, abc.ABC):
-    id: typing.Annotated[ObjectId, ObjectIdPydanticAnnotation]
+    id: typing.Annotated[ObjectId, ObjectIdPydanticAnnotation] = pydantic.Field(
+        default_factory=ObjectId,
+    )
