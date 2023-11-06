@@ -19,6 +19,8 @@ class Settings(BaseSettings):
     criteria_min_membership_expires_at: datetime.date
     criteria_number: int = 2
 
+    selected_country_min_people: int
+
     model_config = SettingsConfigDict(env_prefix="sesanta_", env_file=".env")
 
 
