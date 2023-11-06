@@ -9,10 +9,11 @@ repos:
   - id: end-of-file-fixer
 
 - repo: https://github.com/astral-sh/ruff-pre-commit
-  rev: v0.0.280
+  rev: v0.1.4
   hooks:
   - id: ruff
     args: [--fix, --exit-non-zero-on-fix]
+  - id: ruff-format
 
 - repo: https://github.com/asottile/add-trailing-comma
   rev: v2.1.0
@@ -30,12 +31,6 @@ repos:
   - id: isort
     name: Format with isort
     entry: poetry run isort
-    language: system
-    types: [python]
-
-  - id: black
-    name: Format with Black
-    entry: poetry run black
     language: system
     types: [python]
 

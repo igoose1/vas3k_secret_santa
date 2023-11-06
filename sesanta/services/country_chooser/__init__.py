@@ -20,7 +20,5 @@ class CountryChooser:
         if any(country not in COUNTRIES for country in selected_countries):
             # all countries must be selected from a COUNTRIES list
             return False
-        total_people = sum(
-            MEMBERS_BY_COUNTRY[country] for country in selected_countries
-        )
+        total_people = sum(MEMBERS_BY_COUNTRY[country] for country in selected_countries)
         return total_people >= settings.selected_country_min_people
