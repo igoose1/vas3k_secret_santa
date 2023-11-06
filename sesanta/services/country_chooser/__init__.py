@@ -1,3 +1,5 @@
+import base64
+import functools
 import hashlib
 import pathlib
 
@@ -8,16 +10,16 @@ from sesanta.settings import settings
 
 COUNTRIES = [country_pair[0] for country_pair in COUNTRIES]
 
-with pathlib.Path(__file__).with_name("club_country_popularity.hjson").open(
-    "r",
-) as file:
+with pathlib.Path(__file__).with_name("club_country_popularity.hjson").open("r") as file:
     MEMBERS_BY_COUNTRY: dict[str, int] = hjson.load(file)
 
 
+@functools.lru_cache(maxsize=len(COUNTRIES))
 def hash_country(country: str) -> str:
     """Returns a short pseudo-unique code of a country."""
-    hex_ = hashlib.sha512(country.encode()).hexdigest()
-    return hex_[:16]
+    hash_ = hashlib.sha512(country.encode()).digest()
+    hash_ = base64.urlsafe_b64encode(hash_)
+    return hash_.decode()[:16]
 
 
 HASH_TO_COUNTRY = {hash_country(country): country for country in COUNTRIES}
