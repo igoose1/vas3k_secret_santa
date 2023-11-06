@@ -5,6 +5,7 @@ from sesanta.db.schemas.users import (
     UserCreateSchema,
     UserSchema,
     UserSetEligibilitySchema,
+    UserSetLocationSchema,
 )
 from sesanta.services.club_loader import ClubMember
 
@@ -47,4 +48,15 @@ class UserCollection(AbstractCollection):
         await self.collection.update_one(
             {"telegram_id": telegram_id},
             {"$set": UserSetEligibilitySchema(is_eligible=is_eligible).dict()},
+        )
+
+    async def set_location(
+        self,
+        telegram_id: int,
+        *,
+        location: str,
+    ) -> None:
+        await self.collection.update_one(
+            {"telegram_id": telegram_id},
+            {"$set": UserSetLocationSchema(location=location).dict()},
         )

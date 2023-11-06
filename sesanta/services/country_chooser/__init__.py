@@ -1,3 +1,4 @@
+import hashlib
 import pathlib
 
 import hjson
@@ -11,6 +12,15 @@ with pathlib.Path(__file__).with_name("club_country_popularity.hjson").open(
     "r",
 ) as file:
     MEMBERS_BY_COUNTRY: dict[str, int] = hjson.load(file)
+
+
+def hash_country(country: str) -> str:
+    """Returns a short pseudo-unique code of a country."""
+    hex_ = hashlib.sha512(country.encode()).hexdigest()
+    return hex_[:16]
+
+
+HASH_TO_COUNTRY = {hash_country(country): country for country in COUNTRIES}
 
 
 class CountryChooser:

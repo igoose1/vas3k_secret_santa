@@ -16,5 +16,9 @@ class UserSetEligibilitySchema(AbstractSchema):
     is_eligible: bool = False
 
 
+class UserSetLocationSchema(AbstractSchema):
+    location: str | None = None
+
+
 class UserSchema(UserCreateSchema, UserSetEligibilitySchema):
     pass
