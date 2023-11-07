@@ -19,9 +19,13 @@ async def handler(
     user = await UserGetter(db).must_exist(message.chat.id)
     if not CountryChooser.is_allowed(user.selected_countries):
         await message.reply(
-            "Упс! В выбранных странах недостаточно клубчан. "
-            "Выбери более популярные страны.",
+            (
+                "Упс! В выбранных странах недостаточно клубчан. "
+                "Выбери более популярные страны."
+            ),
         )
         return
     await UserCompletenessSetter(db)(message.chat.id, is_complete=True)
-    await message.reply("Ура! Сохранили твою анкету.")
+    await message.reply(
+        ("Сохранили твою анкету.\n\n" "Хочешь внести изменения? Прожми /start"),
+    )

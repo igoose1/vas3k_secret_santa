@@ -17,7 +17,6 @@ class Settings(BaseSettings):
     criteria_min_upvotes: int
     criteria_max_created_at: datetime.date
     criteria_min_membership_expires_at: datetime.date
-    criteria_number: int = 2
 
     selected_country_min_people: int
 

@@ -6,6 +6,8 @@ from sesanta.db.collections.users import UserCollection
 from sesanta.db.schemas.users import UserCreateSchema
 from sesanta.settings import settings
 
+NUMBER_OF_CRITERIA_TO_PASS = 2
+
 
 @dataclasses.dataclass(slots=True)
 class PassedCriteria:
@@ -14,7 +16,7 @@ class PassedCriteria:
     by_membership_expires_at: bool
 
     def __bool__(self) -> bool:
-        return self.number >= settings.criteria_number
+        return self.number >= NUMBER_OF_CRITERIA_TO_PASS
 
     @property
     def number(self) -> int:
