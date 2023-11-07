@@ -6,6 +6,7 @@ from aiogram.types import CallbackQuery, InlineKeyboardMarkup
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
+from sesanta.bot.filters.eligible import IsEligibleFilter
 from sesanta.db.collections.users import UserCollection
 from sesanta.services.country_chooser import COUNTRIES, HASH_TO_COUNTRY, hash_country
 from sesanta.services.user_getter import UserGetter
@@ -67,7 +68,7 @@ def generate_select_countries_keyboard(
     return keyboard_builder.as_markup()
 
 
-@router.callback_query(SelectCountriesPagerCallback.filter())
+@router.callback_query(SelectCountriesPagerCallback.filter(), IsEligibleFilter())
 async def pager_handler(
     callback_query: CallbackQuery,
     callback_data: SelectCountriesPagerCallback,
@@ -85,7 +86,7 @@ async def pager_handler(
     )
 
 
-@router.callback_query(SelectCountriesCallback.filter())
+@router.callback_query(SelectCountriesCallback.filter(), IsEligibleFilter())
 async def callback_handler(
     callback_query: CallbackQuery,
     callback_data: SelectCountriesCallback,
@@ -94,6 +95,10 @@ async def callback_handler(
     country = callback_data.country
     if callback_query.message is None or country is None:
         await callback_query.answer("Сообщение устарело")
+        return
+    user = await UserGetter(db).must_exist(callback_query.from_user.id)
+    if user.is_complete:
+        await callback_query.answer("Анкета уже была отмечена завершенной.")
         return
     if callback_data.to_mark:
         await UserCollection(db).select_country(
@@ -105,7 +110,6 @@ async def callback_handler(
             callback_query.from_user.id,
             country=country,
         )
-    user = await UserGetter(db).must_exist(callback_query.from_user.id)
     await callback_query.message.edit_reply_markup(
         reply_markup=generate_select_countries_keyboard(
             callback_data.offset,

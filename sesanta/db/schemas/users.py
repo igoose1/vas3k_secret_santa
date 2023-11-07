@@ -5,7 +5,11 @@ import pydantic
 from sesanta.db.schemas.base import AbstractSchema
 
 
-class UserCreateSchema(AbstractSchema):
+class UserSetCompletenessSchema(AbstractSchema):
+    is_complete: bool = False
+
+
+class UserCreateSchema(UserSetCompletenessSchema):
     telegram_id: int
     slug: str
     full_name: str
@@ -22,14 +26,9 @@ class UserSetLocationSchema(AbstractSchema):
     location: str | None = None
 
 
-class UserSetCompletenessSchema(AbstractSchema):
-    is_complete: bool = False
-
-
 class UserSchema(
     UserCreateSchema,
     UserSetEligibilitySchema,
     UserSetLocationSchema,
-    UserSetCompletenessSchema,
 ):
     selected_countries: set[str] = pydantic.Field(default_factory=set)

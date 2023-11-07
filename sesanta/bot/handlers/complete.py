@@ -22,5 +22,6 @@ async def handler(
             "Упс! В выбранных странах недостаточно клубчан. "
             "Выбери более популярные страны.",
         )
+        return
     await UserCompletenessSetter(db)(message.chat.id, is_complete=True)
     await message.reply("Ура! Сохранили твою анкету.")
