@@ -110,6 +110,8 @@ async def callback_handler(
             callback_query.from_user.id,
             country=country,
         )
+    # update to get new selected countries
+    user = await UserGetter(db).must_exist(callback_query.from_user.id)
     await callback_query.message.edit_reply_markup(
         reply_markup=generate_select_countries_keyboard(
             callback_data.offset,
