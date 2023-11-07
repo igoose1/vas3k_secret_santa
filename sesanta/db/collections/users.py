@@ -4,6 +4,7 @@ from sesanta.db.collections.base import AbstractCollection
 from sesanta.db.schemas.users import (
     UserCreateSchema,
     UserSchema,
+    UserSetCompletenessSchema,
     UserSetEligibilitySchema,
     UserSetLocationSchema,
 )
@@ -81,4 +82,15 @@ class UserCollection(AbstractCollection):
         await self.collection.update_one(
             {"telegram_id": telegram_id},
             {"$pull": {"selected_countries": country}},
+        )
+
+    async def set_completeness(
+        self,
+        telegram_id: int,
+        *,
+        is_complete: bool,
+    ) -> None:
+        await self.collection.update_one(
+            {"telegram_id": telegram_id},
+            {"$set": UserSetCompletenessSchema(is_complete=is_complete).dict()},
         )

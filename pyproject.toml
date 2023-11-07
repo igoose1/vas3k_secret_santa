@@ -58,6 +58,9 @@ select = [
 	"UP",
 	"DTZ",
 ]
+ignore = [
+	"RUF001",
+]
 
 
 [build-system]

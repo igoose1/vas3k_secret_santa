@@ -27,10 +27,12 @@ HASH_TO_COUNTRY = {hash_country(country): country for country in COUNTRIES}
 
 class CountryChooser:
     @classmethod
-    def is_allowed(cls, selected_countries: list[str]) -> bool:
+    def is_allowed(cls, selected_countries: set[str]) -> bool:
         """Returns True if a total number of people in countries is high enough."""
         if any(country not in COUNTRIES for country in selected_countries):
             # all countries must be selected from a COUNTRIES list
             return False
-        total_people = sum(MEMBERS_BY_COUNTRY[country] for country in selected_countries)
+        total_people = sum(
+            MEMBERS_BY_COUNTRY.get(country, 0) for country in selected_countries
+        )
         return total_people >= settings.selected_country_min_people
