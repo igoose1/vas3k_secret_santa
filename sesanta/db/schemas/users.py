@@ -1,5 +1,7 @@
 import datetime
 
+import pydantic
+
 from sesanta.db.schemas.base import AbstractSchema
 
 
@@ -21,4 +23,4 @@ class UserSetLocationSchema(AbstractSchema):
 
 
 class UserSchema(UserCreateSchema, UserSetEligibilitySchema):
-    pass
+    selected_countries: set[str] = pydantic.Field(default_factory=set)

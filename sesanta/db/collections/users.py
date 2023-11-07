@@ -60,3 +60,25 @@ class UserCollection(AbstractCollection):
             {"telegram_id": telegram_id},
             {"$set": UserSetLocationSchema(location=location).dict()},
         )
+
+    async def select_country(
+        self,
+        telegram_id: int,
+        *,
+        country: str,
+    ) -> None:
+        await self.collection.update_one(
+            {"telegram_id": telegram_id},
+            {"$addToSet": {"selected_countries": country}},
+        )
+
+    async def unselect_country(
+        self,
+        telegram_id: int,
+        *,
+        country: str,
+    ) -> None:
+        await self.collection.update_one(
+            {"telegram_id": telegram_id},
+            {"$pull": {"selected_countries": country}},
+        )
