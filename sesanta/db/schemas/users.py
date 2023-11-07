@@ -22,5 +22,5 @@ class UserSetLocationSchema(AbstractSchema):
     location: str | None = None
 
 
-class UserSchema(UserCreateSchema, UserSetEligibilitySchema):
+class UserSchema(UserCreateSchema, UserSetEligibilitySchema, UserSetLocationSchema):
     selected_countries: set[str] = pydantic.Field(default_factory=set)

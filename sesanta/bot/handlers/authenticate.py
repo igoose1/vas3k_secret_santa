@@ -23,17 +23,14 @@ async def handler(
         await message.reply("He подходишь!")
         return
     await message.reply("Подходишь по критериям!")
-    user = await UserGetter(db)(message.chat.id)
-    if user is None:
-        msg = "never happens"
-        raise NotImplementedError(msg)
+    user = await UserGetter(db).must_exist(message.chat.id)
     await UserEligibilitySetter(db).users.set_eligibility(
         message.chat.id,
         is_eligible=True,
     )
     await message.answer(
         "Где ты хочешь получить подарок? Можно выбрать только одну страну.",
-        reply_markup=generate_set_location_keyboard(offset=0),
+        reply_markup=generate_set_location_keyboard(offset=0, already_set=user.location),
     )
     await message.answer(
         "Куда ты отправишь подарок? Можно выбрать несколько стран.",

@@ -2,23 +2,24 @@ import typing
 
 from aiogram import Router
 from aiogram.filters.callback_data import CallbackData
-from aiogram.types import CallbackQuery, InlineKeyboardMarkup, Message
+from aiogram.types import CallbackQuery, InlineKeyboardMarkup
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
-from sesanta.bot.filters import IsEligibleFilter
 from sesanta.db.collections.users import UserCollection
 from sesanta.services.country_chooser import COUNTRIES, HASH_TO_COUNTRY, hash_country
+from sesanta.services.user_getter import UserGetter
 
 router = Router(name="set_location")
 
 
 class SetLocationCallback(CallbackData, prefix="sl"):
     country_hash: str
+    offset: int
 
     @classmethod
-    def from_country(cls, country: str) -> typing.Self:
-        return cls(country_hash=hash_country(country))
+    def from_country(cls, country: str, offset: int) -> typing.Self:
+        return cls(country_hash=hash_country(country), offset=offset)
 
     @property
     def country(self) -> str | None:
@@ -32,12 +33,16 @@ class SetLocationPagerCallback(CallbackData, prefix="slp"):
 COUNTRIES_IN_ONE_KEYBOARD = 16
 
 
-def generate_set_location_keyboard(offset: int) -> InlineKeyboardMarkup:
+def generate_set_location_keyboard(
+    offset: int,
+    already_set: str | None,
+) -> InlineKeyboardMarkup:
     keyboard_builder = InlineKeyboardBuilder()
     for country in COUNTRIES[offset : offset + COUNTRIES_IN_ONE_KEYBOARD]:
+        text = ("✔️ " if already_set == country else "") + country
         keyboard_builder.button(
-            text=country,
-            callback_data=SetLocationCallback.from_country(country),
+            text=text,
+            callback_data=SetLocationCallback.from_country(country, offset),
         )
     if offset:
         keyboard_builder.button(
@@ -61,23 +66,17 @@ def generate_set_location_keyboard(offset: int) -> InlineKeyboardMarkup:
 async def pager_handler(
     callback_query: CallbackQuery,
     callback_data: SetLocationPagerCallback,
+    db: AsyncIOMotorDatabase,
 ) -> None:
     if callback_query.message is None:
         await callback_query.answer("Сообщение устарело")
         return
+    user = await UserGetter(db).must_exist(callback_query.from_user.id)
     await callback_query.message.edit_reply_markup(
-        reply_markup=generate_set_location_keyboard(callback_data.offset),
-    )
-
-
-@router.message(IsEligibleFilter())
-async def handler(
-    message: Message,
-    db: AsyncIOMotorDatabase,
-) -> None:
-    await message.answer(
-        "Где ты?",
-        reply_markup=generate_set_location_keyboard(offset=0),
+        reply_markup=generate_set_location_keyboard(
+            callback_data.offset,
+            already_set=user.location,
+        ),
     )
 
 
@@ -92,6 +91,10 @@ async def callback_handler(
         await callback_query.answer("Сообщение устарело")
         return
     await UserCollection(db).set_location(callback_query.from_user.id, location=country)
-    await callback_query.answer(
-        text=f"Супер. Установили для тебя страну {country}",
+    user = await UserGetter(db).must_exist(callback_query.from_user.id)
+    await callback_query.message.edit_reply_markup(
+        reply_markup=generate_set_location_keyboard(
+            offset=callback_data.offset,
+            already_set=user.location,
+        ),
     )

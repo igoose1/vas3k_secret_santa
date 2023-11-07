@@ -76,10 +76,7 @@ async def pager_handler(
     if callback_query.message is None:
         await callback_query.answer("Сообщение устарело")
         return
-    user = await UserGetter(db)(callback_query.from_user.id)
-    if user is None:
-        msg = "never happens"
-        raise NotImplementedError(msg)
+    user = await UserGetter(db).must_exist(callback_query.from_user.id)
     await callback_query.message.edit_reply_markup(
         reply_markup=generate_select_countries_keyboard(
             callback_data.offset,
@@ -108,10 +105,7 @@ async def callback_handler(
             callback_query.from_user.id,
             country=country,
         )
-    user = await UserGetter(db)(callback_query.from_user.id)
-    if user is None:
-        msg = "never happens"
-        raise NotImplementedError(msg)
+    user = await UserGetter(db).must_exist(callback_query.from_user.id)
     await callback_query.message.edit_reply_markup(
         reply_markup=generate_select_countries_keyboard(
             callback_data.offset,
