@@ -3,6 +3,8 @@ version: '3.9'
 services:
   bot:
     build: .
+    depends_on:
+    - mongo
     restart: always
     environment:
       SESANTA_BOT_TOKEN: $SESANTA_BOT_TOKEN
@@ -14,6 +16,20 @@ services:
       SESANTA_CRITERIA_MIN_MEMBERSHIP_EXPIRES_AT: $SESANTA_CRITERIA_MIN_MEMBERSHIP_EXPIRES_AT
       SESANTA_SELECTED_COUNTRY_MIN_PEOPLE: $SESANTA_SELECTED_COUNTRY_MIN_PEOPLE
 
+  backuper:
+    build:
+      context: .
+      dockerfile: BackupDockerfile
+      args:
+        DB_URI: mongodb://mongo:27017
+    restart: always
+    depends_on:
+    - mongo
+    volumes:
+    - ./dump:/dump
+
   mongo:
     image: mongo:7.0.2
     restart: always
+    volumes:
+    - ./dbdata:/data/db

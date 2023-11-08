@@ -1,0 +1,22 @@
+FROM golang:1.21-alpine3.18 AS ofelia-builder
+ENV GOBIN=/usr/bin/
+RUN go install 'github.com/mcuadros/ofelia@v0.3.7'
+
+ARG DB_URI
+RUN test -n "${DB_URI}"
+RUN printf > /ofelia.ini '[job-local "backuper"]\nschedule = @every 24h\ncommand = /usr/bin/mongodump --out=/dump --gzip "%s"' "${DB_URI}"
+
+FROM golang:1.21-alpine3.18 as mongo-tools
+RUN apk --no-cache add git build-base krb5-dev && \
+	rm -rf /var/cache/apk/*
+RUN git clone --depth 1 --branch 100.9.0 https://github.com/mongodb/mongo-tools.git && \
+	cd mongo-tools && \
+	./make build -pkgs=mongodump,mongorestore && \
+	mv bin/* /usr/bin/ && \
+	cd .. && \
+	rm -rf mongo-tools
+
+COPY --from=ofelia-builder /ofelia.ini /
+COPY --from=ofelia-builder /usr/bin/ofelia /usr/bin/
+
+CMD ["/usr/bin/ofelia", "daemon", "--config=/ofelia.ini"]

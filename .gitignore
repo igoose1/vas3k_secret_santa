@@ -17,3 +17,8 @@ venv
 /dist/
 
 .local
+
+# mongodb last backups
+dump/
+# mongodb data
+dbdata/
