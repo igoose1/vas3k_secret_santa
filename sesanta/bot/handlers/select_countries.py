@@ -11,7 +11,7 @@ from sesanta.db.collections.users import UserCollection
 from sesanta.services.country_chooser import COUNTRIES, HASH_TO_COUNTRY, hash_country
 from sesanta.services.user_getter import UserGetter
 
-router = Router(name="select_countries")
+router = Router()
 
 
 class SelectCountriesCallback(CallbackData, prefix="sc"):

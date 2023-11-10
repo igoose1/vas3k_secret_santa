@@ -11,7 +11,7 @@ from sesanta.db.collections.users import UserCollection
 from sesanta.services.country_chooser import COUNTRIES, HASH_TO_COUNTRY, hash_country
 from sesanta.services.user_getter import UserGetter
 
-router = Router(name="set_location")
+router = Router()
 
 
 class SetLocationCallback(CallbackData, prefix="sl"):
@@ -70,7 +70,7 @@ async def pager_handler(
     db: AsyncIOMotorDatabase,
 ) -> None:
     if callback_query.message is None:
-        await callback_query.answer("Сообщение устарело")
+        await callback_query.answer("Кнопки устарели, перезапусти их через /start")
         return
     user = await UserGetter(db).must_exist(callback_query.from_user.id)
     await callback_query.message.edit_reply_markup(
@@ -89,11 +89,13 @@ async def callback_handler(
 ) -> None:
     country = callback_data.country
     if callback_query.message is None or country is None:
-        await callback_query.answer("Сообщение устарело")
+        await callback_query.answer("Кнопки устарели, перезапусти их через /start")
         return
     user = await UserGetter(db).must_exist(callback_query.from_user.id)
     if user.is_complete:
-        await callback_query.answer("Анкета уже была отмечена завершенной.")
+        await callback_query.answer(
+            "Анкета уже отмечена завершенной. Перезапусти ее через /start.",
+        )
         return
     await UserCollection(db).set_location(callback_query.from_user.id, location=country)
     await callback_query.message.edit_reply_markup(

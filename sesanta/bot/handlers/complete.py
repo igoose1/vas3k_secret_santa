@@ -8,7 +8,7 @@ from sesanta.services.country_chooser import CountryChooser
 from sesanta.services.user_getter import UserGetter
 from sesanta.services.user_set_completeness import UserCompletenessSetter
 
-router = Router(name="complete")
+router = Router()
 
 
 @router.message(Command("complete"), IsEligibleFilter())
@@ -18,14 +18,14 @@ async def handler(
 ) -> None:
     user = await UserGetter(db).must_exist(message.chat.id)
     if not CountryChooser.is_allowed(user.selected_countries):
-        await message.reply(
+        await message.answer(
             (
-                "Упс! В выбранных странах недостаточно клубчан. "
-                "Выбери более популярные страны."
+                "Упс! В выбранных странах мало клубчан. Может, выбрать хотя бы одну "
+                "популярную страну?"
             ),
         )
         return
     await UserCompletenessSetter(db)(message.chat.id, is_complete=True)
-    await message.reply(
-        ("Сохранили твою анкету.\n\n" "Хочешь внести изменения? Прожми /start"),
+    await message.answer(
+        "Сохранили твою анкету.\n\n Если захочешь внести изменения, прожми /start",
     )
