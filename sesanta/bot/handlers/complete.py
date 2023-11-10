@@ -27,5 +27,5 @@ async def handler(
         return
     await UserCompletenessSetter(db)(message.chat.id, is_complete=True)
     await message.answer(
-        "Сохранили твою анкету.\n\n Если захочешь внести изменения, прожми /start",
+        "Сохранили твою анкету.\n\nЕсли захочешь внести изменения, прожми /start",
     )
