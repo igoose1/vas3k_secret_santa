@@ -12,6 +12,7 @@ from sesanta.services.user_creator import UserUpdater
 from sesanta.services.user_eligibility_setter import UserEligibilitySetter
 from sesanta.services.user_is_eligible import IsUserEligible
 from sesanta.settings import settings
+from sesanta.utils.plural import RuPlural
 
 router = Router()
 
@@ -41,13 +42,15 @@ async def handler(
             ),
         )
         return
+    plural = RuPlural("плюсик", "плюсика", "плюсиков")
     await message.answer(
         (
             f"Нашли тебя в клубе. Ты, должно быть, {member.full_name}.\n\n"
             "В этом году в секретном санте могут участвовать только проверенные люди. "
             "Так, мы уменьшаем риск оставить кого-то без подарка.\n\n"
             "Для твоего участия должно выполняться два пункта из трех:\n"
-            f"* У тебя хотя бы столько плюсиков: {settings.criteria_min_upvotes},\n"
+            f"* У тебя хотя бы {settings.criteria_min_upvotes} "
+            f"{plural(settings.criteria_min_upvotes)},\n"
             f"* Твой аккаунт создан не позднее {settings.criteria_max_created_at},\n"
             "* Твоя подписка истекает не раньше "
             f"{settings.criteria_min_membership_expires_at}.\n\n"
