@@ -61,6 +61,14 @@ select = [
 ignore = [
 	"RUF001",
 ]
+[tool.ruff.per-file-ignores]
+"test_*.py" = ["S101", "PLR2004"]
+
+
+[tool.pytest.ini_options]
+testpaths = [
+	"tests",
+]
 
 
 [build-system]

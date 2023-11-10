@@ -1,6 +1,7 @@
 import base64
 import functools
 import hashlib
+import itertools
 import pathlib
 
 import hjson
@@ -12,6 +13,24 @@ COUNTRIES = [country_pair[0] for country_pair in COUNTRIES]
 
 with pathlib.Path(__file__).with_name("club_country_popularity.hjson").open("r") as file:
     MEMBERS_BY_COUNTRY: dict[str, int] = hjson.load(file)
+
+with pathlib.Path(__file__).with_name("groups.hjson").open("r") as file:
+    GROUPS: dict[str, list[str]] = hjson.load(file)
+
+
+def validate_groups(groups: dict[str, list[str]]) -> None:
+    fast_lookup = set(COUNTRIES)
+    failed: list[str] = []
+    for country in itertools.chain.from_iterable(groups.values()):
+        if country not in fast_lookup:
+            failed.append(country)
+    if failed:
+        msg = f"unknown countries: {failed}"
+        raise ValueError(msg)
+
+
+GROUPS["Весь мир"] = COUNTRIES
+validate_groups(GROUPS)
 
 
 @functools.lru_cache(maxsize=len(COUNTRIES))
