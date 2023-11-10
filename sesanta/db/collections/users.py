@@ -117,3 +117,11 @@ class UserCollection(AbstractCollection):
             {"telegram_id": telegram_id},
             {"$set": UserFillAddressSchema(address=address).dict()},
         )
+
+    async def delete(
+        self,
+        telegram_id: int,
+    ) -> None:
+        await self.collection.delete_one(
+            {"telegram_id": telegram_id},
+        )
