@@ -3,6 +3,7 @@ import typing
 from sesanta.db.collections.base import AbstractCollection
 from sesanta.db.schemas.users import (
     UserCreateSchema,
+    UserFillAddressSchema,
     UserSchema,
     UserSetCompletenessSchema,
     UserSetEligibilitySchema,
@@ -93,4 +94,15 @@ class UserCollection(AbstractCollection):
         await self.collection.update_one(
             {"telegram_id": telegram_id},
             {"$set": UserSetCompletenessSchema(is_complete=is_complete).dict()},
+        )
+
+    async def fill_address(
+        self,
+        telegram_id: int,
+        *,
+        address: str,
+    ) -> None:
+        await self.collection.update_one(
+            {"telegram_id": telegram_id},
+            {"$set": UserFillAddressSchema(address=address).dict()},
         )
