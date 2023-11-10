@@ -21,6 +21,6 @@ router.include_routers(
     complete_router,
     understood_set_location_router,
     understood_select_countries_router,
-    fill_address_router,
     delete_router,
+    fill_address_router,
 )
