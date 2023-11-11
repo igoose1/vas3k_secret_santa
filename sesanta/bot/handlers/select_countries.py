@@ -71,7 +71,7 @@ def generate_select_countries_keyboard(
     coffset = max(0, offset - len(GROUPS))
     climit = coffset + BUTTONS_IN_ONE_KEYBOARD - len(GROUPS)
     for country in COUNTRIES[coffset:climit]:
-        text = ("✔️ " if country in already_selected else "") + country
+        text = ("✅ " if country in already_selected else "") + country
         keyboard_builder.button(
             text=text,
             callback_data=SelectCountriesCallback.from_country(

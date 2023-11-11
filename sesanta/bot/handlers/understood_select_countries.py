@@ -8,7 +8,7 @@ from sesanta.bot.handlers.select_countries import generate_select_countries_keyb
 from sesanta.services.user_getter import UserGetter
 
 router = Router()
-UNDERSTOOD_TEXT = "Понятно. Надо будет отметить, куда я не против отправить подарок"
+UNDERSTOOD_TEXT = "Понятно. Надо будет отметить, куда я смогу отправить подарок"
 
 
 @router.message(F.text == UNDERSTOOD_TEXT, IsEligibleFilter())

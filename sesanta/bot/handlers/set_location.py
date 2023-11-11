@@ -40,7 +40,7 @@ def generate_set_location_keyboard(
 ) -> InlineKeyboardMarkup:
     keyboard_builder = InlineKeyboardBuilder()
     for country in COUNTRIES[offset : offset + COUNTRIES_IN_ONE_KEYBOARD]:
-        text = ("✔️ " if already_set == country else "") + country
+        text = ("✅ " if already_set == country else "") + country
         keyboard_builder.button(
             text=text,
             callback_data=SetLocationCallback.from_country(country, offset),
