@@ -14,8 +14,10 @@ COUNTRIES = [country_pair[0] for country_pair in COUNTRIES]
 with pathlib.Path(__file__).with_name("club_country_popularity.hjson").open("r") as file:
     MEMBERS_BY_COUNTRY: dict[str, int] = hjson.load(file)
 
+GROUPS: dict[str, list[str]] = {}
+GROUPS["Весь мир"] = COUNTRIES
 with pathlib.Path(__file__).with_name("groups.hjson").open("r") as file:
-    GROUPS: dict[str, list[str]] = hjson.load(file)
+    GROUPS.update(hjson.load(file))
 
 
 def validate_groups(groups: dict[str, list[str]]) -> None:
@@ -29,7 +31,6 @@ def validate_groups(groups: dict[str, list[str]]) -> None:
         raise ValueError(msg)
 
 
-GROUPS["Весь мир"] = COUNTRIES
 validate_groups(GROUPS)
 
 
