@@ -31,7 +31,7 @@ class SetLocationPagerCallback(CallbackData, prefix="slp"):
     offset: int
 
 
-COUNTRIES_IN_ONE_KEYBOARD = 16
+BUTTONS_IN_ONE_KEYBOARD = 20
 
 
 def generate_set_location_keyboard(
@@ -39,7 +39,7 @@ def generate_set_location_keyboard(
     already_set: str | None,
 ) -> InlineKeyboardMarkup:
     keyboard_builder = InlineKeyboardBuilder()
-    for country in COUNTRIES[offset : offset + COUNTRIES_IN_ONE_KEYBOARD]:
+    for country in COUNTRIES[offset : offset + BUTTONS_IN_ONE_KEYBOARD]:
         text = ("✅ " if already_set == country else "") + country
         keyboard_builder.button(
             text=text,
@@ -49,14 +49,14 @@ def generate_set_location_keyboard(
         keyboard_builder.button(
             text="⬅️",
             callback_data=SetLocationPagerCallback(
-                offset=offset - COUNTRIES_IN_ONE_KEYBOARD,
+                offset=max(0, offset - BUTTONS_IN_ONE_KEYBOARD),
             ),
         )
-    if offset + COUNTRIES_IN_ONE_KEYBOARD < len(COUNTRIES):
+    if offset + BUTTONS_IN_ONE_KEYBOARD < len(COUNTRIES):
         keyboard_builder.button(
             text="➡️",
             callback_data=SetLocationPagerCallback(
-                offset=offset + COUNTRIES_IN_ONE_KEYBOARD,
+                offset=offset + BUTTONS_IN_ONE_KEYBOARD,
             ),
         )
     keyboard_builder.adjust(2)

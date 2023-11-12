@@ -48,7 +48,7 @@ class SelectCountriesPagerCallback(CallbackData, prefix="scp"):
     offset: int
 
 
-BUTTONS_IN_ONE_KEYBOARD = 16
+BUTTONS_IN_ONE_KEYBOARD = 20
 
 
 def generate_select_countries_keyboard(
@@ -88,7 +88,7 @@ def generate_select_countries_keyboard(
         keyboard_builder.button(
             text="⬅️",
             callback_data=SelectCountriesPagerCallback(
-                offset=offset - BUTTONS_IN_ONE_KEYBOARD,
+                offset=max(0, offset - BUTTONS_IN_ONE_KEYBOARD),
             ),
         )
     if offset + BUTTONS_IN_ONE_KEYBOARD < len(COUNTRIES):
