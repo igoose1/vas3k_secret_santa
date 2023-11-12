@@ -10,6 +10,7 @@ class Settings(BaseSettings):
     mongo_uri: MongoDsn
     mongo_db: str = "sesanta"
 
+    club_post_link: str
     club_by_telegram_id_endpoint: str
     club_token: str
     club_max_rate_per_minute: int = 60
