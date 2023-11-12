@@ -46,3 +46,4 @@ async def confirm_handler(
         await callback_query.message.answer("Аккаунт в клубе удален.")  # I'm sorry
         await asyncio.sleep(5)
         await callback_query.message.answer("Шутка")
+        await callback_query.answer()
