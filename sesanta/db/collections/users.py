@@ -96,6 +96,15 @@ class UserCollection(AbstractCollection):
             {"$pull": {"selected_countries": country}},
         )
 
+    async def unselect_all_countries(
+        self,
+        telegram_id: int,
+    ) -> None:
+        await self.collection.update_one(
+            {"telegram_id": telegram_id},
+            {"$set": {"selected_countries": []}},
+        )
+
     async def set_completeness(
         self,
         telegram_id: int,

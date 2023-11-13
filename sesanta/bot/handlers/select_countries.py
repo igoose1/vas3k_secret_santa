@@ -44,11 +44,15 @@ class SelectGroupCallback(CallbackData, prefix="sg"):
         return GROUPS.get(self.group_name, [])
 
 
+class UnselectAllCallback(CallbackData, prefix="unall"):
+    offset: int
+
+
 class SelectCountriesPagerCallback(CallbackData, prefix="scp"):
     offset: int
 
 
-BUTTONS_IN_ONE_KEYBOARD = 20
+COUNTRIES_IN_ONE_KEYBOARD = 20
 
 
 def generate_select_countries_keyboard(
@@ -56,7 +60,13 @@ def generate_select_countries_keyboard(
     already_selected: set[str],
 ) -> InlineKeyboardMarkup:
     keyboard_builder = InlineKeyboardBuilder()
-    for group_name in list(GROUPS)[offset : offset + BUTTONS_IN_ONE_KEYBOARD]:
+    keyboard_builder.button(
+        text="Отжать все",
+        callback_data=UnselectAllCallback(
+            offset=offset,
+        ),
+    )
+    for group_name in list(GROUPS)[offset : offset + COUNTRIES_IN_ONE_KEYBOARD]:
         plural = RuPlural("страна", "страны", "стран")
         length = len(GROUPS[group_name])
         emoji = random_cool_emoji()  # to avoid "Bad Request: message is not modified"
@@ -70,10 +80,10 @@ def generate_select_countries_keyboard(
         )
     if offset < len(GROUPS):
         coffset = 0
-        climit = coffset + BUTTONS_IN_ONE_KEYBOARD - len(GROUPS)
+        climit = coffset + COUNTRIES_IN_ONE_KEYBOARD - len(GROUPS)
     else:
         coffset = offset - len(GROUPS)
-        climit = coffset + BUTTONS_IN_ONE_KEYBOARD
+        climit = coffset + COUNTRIES_IN_ONE_KEYBOARD
     for country in COUNTRIES[coffset:climit]:
         text = ("✅ " if country in already_selected else "") + country
         keyboard_builder.button(
@@ -88,17 +98,17 @@ def generate_select_countries_keyboard(
         keyboard_builder.button(
             text="⬅️",
             callback_data=SelectCountriesPagerCallback(
-                offset=max(0, offset - BUTTONS_IN_ONE_KEYBOARD),
+                offset=max(0, offset - COUNTRIES_IN_ONE_KEYBOARD),
             ),
         )
-    if offset + BUTTONS_IN_ONE_KEYBOARD < len(COUNTRIES):
+    if offset + COUNTRIES_IN_ONE_KEYBOARD < len(COUNTRIES):
         keyboard_builder.button(
             text="➡️",
             callback_data=SelectCountriesPagerCallback(
-                offset=offset + BUTTONS_IN_ONE_KEYBOARD,
+                offset=offset + COUNTRIES_IN_ONE_KEYBOARD,
             ),
         )
-    keyboard_builder.adjust(2)
+    keyboard_builder.adjust(1, 2)
     return keyboard_builder.as_markup()
 
 
@@ -170,6 +180,32 @@ async def group_handler(
     await UserCollection(db).select_countries(
         callback_query.from_user.id,
         countries=callback_data.countries,
+    )
+    # update to get new selected countries
+    user = await UserGetter(db).must_exist(callback_query.from_user.id)
+    await callback_query.message.edit_reply_markup(
+        reply_markup=generate_select_countries_keyboard(
+            callback_data.offset,
+            already_selected=user.selected_countries,
+        ),
+    )
+
+
+@router.callback_query(UnselectAllCallback.filter(), IsEligibleFilter())
+async def unselect_all_handler(
+    callback_query: CallbackQuery,
+    callback_data: UnselectAllCallback,
+    db: AsyncIOMotorDatabase,
+) -> None:
+    if callback_query.message is None:
+        await callback_query.answer("Сообщение устарело")
+        return
+    user = await UserGetter(db).must_exist(callback_query.from_user.id)
+    if user.is_complete:
+        await callback_query.answer("Анкета уже была отмечена завершенной.")
+        return
+    await UserCollection(db).unselect_all_countries(
+        callback_query.from_user.id,
     )
     # update to get new selected countries
     user = await UserGetter(db).must_exist(callback_query.from_user.id)
