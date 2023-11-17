@@ -4,10 +4,13 @@ import sys
 import asyncclick as click
 import hjson
 from motor.motor_asyncio import AsyncIOMotorClient
+from pydantic import TypeAdapter
 
 from sesanta.db.collections.users import UserCollection
 from sesanta.settings import settings
 from utils.basic import User
+
+UserListAdapter = TypeAdapter(list[User])
 
 
 @click.command()
@@ -30,10 +33,11 @@ async def main(completed_only: bool, json: bool) -> None:
             ),
         )
 
+    adapted_result = UserListAdapter.dump_python(result)
     if json:
-        jsonlib.dump(result, sys.stdout, ensure_ascii=False)
+        jsonlib.dump(adapted_result, sys.stdout, ensure_ascii=False)
     else:
-        hjson.dump(result, sys.stdout)
+        hjson.dump(adapted_result, sys.stdout)
 
 
 if __name__ == "__main__":
