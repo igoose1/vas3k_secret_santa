@@ -1,4 +1,5 @@
-import typing
+from collections.abc import AsyncGenerator
+from typing import Any, ClassVar
 
 from sesanta.db.collections.base import AbstractCollection
 from sesanta.db.schemas.users import (
@@ -13,9 +14,13 @@ from sesanta.services.club_loader import ClubMember
 
 
 class UserCollection(AbstractCollection):
-    name: typing.ClassVar[str] = "users"
+    name: ClassVar[str] = "users"
 
-    async def get(self, filter_: dict[str, typing.Any]) -> UserSchema | None:
+    async def get_all(self, filter_: dict[str, Any]) -> AsyncGenerator[UserSchema, Any]:
+        async for document in self.collection.find(filter_):
+            yield UserSchema.model_validate(document)
+
+    async def get(self, filter_: dict[str, Any]) -> UserSchema | None:
         if (document := await self.collection.find_one(filter_)) is not None:
             return UserSchema.model_validate(document)
         return None

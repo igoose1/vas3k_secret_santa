@@ -38,6 +38,5 @@ repos:
     name: Validate types with pyright
     entry: poetry run pyright
     pass_filenames: false
-    args: [sesanta]
     language: system
     types: [python]

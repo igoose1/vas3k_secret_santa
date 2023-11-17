@@ -16,7 +16,7 @@ def main() -> None:
     result: dict[str, int] = {}
     soup = BeautifulSoup(sys.stdin.read(), features="html.parser")
     select = soup.find("select", attrs={"name": "country"})
-    for option in select.find_all("option"):
+    for option in select.find_all("option"):  # type: ignore
         matched = number_regex.search(str(option))
         if matched is None:
             if option.text != "Весь мир":
