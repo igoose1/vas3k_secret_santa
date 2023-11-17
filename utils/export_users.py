@@ -4,17 +4,10 @@ import sys
 import asyncclick as click
 import hjson
 from motor.motor_asyncio import AsyncIOMotorClient
-from typing_extensions import TypedDict
 
 from sesanta.db.collections.users import UserCollection
 from sesanta.settings import settings
-
-
-class User(TypedDict):
-    slug: str
-    location: str | None
-    selected: list[str]
-    is_completed: bool
+from utils.basic import User
 
 
 @click.command()
