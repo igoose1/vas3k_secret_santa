@@ -8,7 +8,7 @@ from sesanta.services.user_fill_address import UserAddressFiller
 router = Router()
 
 
-@router.message(F.text, IsCompleteFilter(is_complete=True))
+@router.message(F.text, IsCompleteFilter(is_completed=True))
 async def handler(
     message: Message,
     db: AsyncIOMotorDatabase,

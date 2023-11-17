@@ -92,7 +92,7 @@ async def callback_handler(
         await callback_query.answer("Кнопки устарели, перезапусти их через /start")
         return
     user = await UserGetter(db).must_exist(callback_query.from_user.id)
-    if user.is_complete:
+    if user.is_completed:
         await callback_query.answer(
             "Анкета уже отмечена завершенной. Перезапусти ее через /start.",
         )

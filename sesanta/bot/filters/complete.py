@@ -6,8 +6,8 @@ from sesanta.services.user_getter import UserGetter
 
 
 class IsCompleteCallbackFilter(Filter):
-    def __init__(self, is_complete: bool):
-        self.is_complete = is_complete
+    def __init__(self, is_completed: bool):
+        self.is_completed = is_completed
 
     async def __call__(
         self,
@@ -15,7 +15,7 @@ class IsCompleteCallbackFilter(Filter):
         db: AsyncIOMotorDatabase,
     ) -> bool:
         user = await UserGetter(db)(callback_query.from_user.id)
-        return user is not None and user.is_complete == self.is_complete
+        return user is not None and user.is_completed == self.is_completed
 
 
 class IsCompleteFilter(IsCompleteCallbackFilter):
@@ -25,4 +25,4 @@ class IsCompleteFilter(IsCompleteCallbackFilter):
         db: AsyncIOMotorDatabase,
     ) -> bool:
         user = await UserGetter(db)(message.chat.id)
-        return user is not None and user.is_complete == self.is_complete
+        return user is not None and user.is_completed == self.is_completed

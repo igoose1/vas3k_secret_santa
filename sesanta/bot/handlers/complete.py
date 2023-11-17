@@ -51,7 +51,7 @@ async def handler(
         await is_able_to_continue(message, user)
     except CantContinueError:
         return
-    await UserCompletenessSetter(db)(message.chat.id, is_complete=True)
+    await UserCompletenessSetter(db)(message.chat.id, is_completed=True)
     selected = ", ".join(sorted(user.selected_countries, key=hash_country))
     # selected is sorted in a weird order FOR PURPOSE
     await message.answer(

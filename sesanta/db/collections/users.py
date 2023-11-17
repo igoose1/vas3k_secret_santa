@@ -109,11 +109,11 @@ class UserCollection(AbstractCollection):
         self,
         telegram_id: int,
         *,
-        is_complete: bool,
+        is_completed: bool,
     ) -> None:
         await self.collection.update_one(
             {"telegram_id": telegram_id},
-            {"$set": UserSetCompletenessSchema(is_complete=is_complete).dict()},
+            {"$set": UserSetCompletenessSchema(is_completed=is_completed).dict()},
         )
 
     async def fill_address(

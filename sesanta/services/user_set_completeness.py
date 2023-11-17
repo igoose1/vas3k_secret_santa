@@ -10,6 +10,6 @@ class UserCompletenessSetter:
     async def __call__(
         self,
         telegram_id: int,
-        is_complete: bool,
+        is_completed: bool,
     ) -> None:
-        await self.users.set_completeness(telegram_id, is_complete=is_complete)
+        await self.users.set_completeness(telegram_id, is_completed=is_completed)

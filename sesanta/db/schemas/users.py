@@ -6,7 +6,7 @@ from sesanta.db.schemas.base import AbstractSchema
 
 
 class UserSetCompletenessSchema(AbstractSchema):
-    is_complete: bool = False
+    is_completed: bool = False
 
 
 class UserCreateSchema(UserSetCompletenessSchema):

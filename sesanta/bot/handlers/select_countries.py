@@ -141,7 +141,7 @@ async def callback_handler(
         await callback_query.answer("Сообщение устарело")
         return
     user = await UserGetter(db).must_exist(callback_query.from_user.id)
-    if user.is_complete:
+    if user.is_completed:
         await callback_query.answer("Анкета уже была отмечена завершенной.")
         return
     if callback_data.to_mark:
@@ -174,7 +174,7 @@ async def group_handler(
         await callback_query.answer("Сообщение устарело")
         return
     user = await UserGetter(db).must_exist(callback_query.from_user.id)
-    if user.is_complete:
+    if user.is_completed:
         await callback_query.answer("Анкета уже была отмечена завершенной.")
         return
     await UserCollection(db).select_countries(
@@ -201,7 +201,7 @@ async def unselect_all_handler(
         await callback_query.answer("Сообщение устарело")
         return
     user = await UserGetter(db).must_exist(callback_query.from_user.id)
-    if user.is_complete:
+    if user.is_completed:
         await callback_query.answer("Анкета уже была отмечена завершенной.")
         return
     await UserCollection(db).unselect_all_countries(
