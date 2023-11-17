@@ -18,11 +18,12 @@ class SimulatedAnnealing:
         self,
         iterations: int,
         graph: Graph,
+        order: list[Vertex] | None = None,
         randgen: random.Random | None = None,
     ):
         self.iterations = iterations
         self.graph = graph
-        self.order = graph.vertexes
+        self.order = order or graph.vertexes
         self.random = randgen or random.Random()
 
     def E(self, order: list[Vertex]) -> int:

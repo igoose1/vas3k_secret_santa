@@ -1,3 +1,4 @@
+import random
 import sys
 
 import click
@@ -14,8 +15,9 @@ class FindCycleUser(User):
 
 
 @click.command()
-@click.option("--iterations", type=click.INT)
-def main(iterations: int) -> None:
+@click.option("--iterations", type=int)
+@click.option("--attempts", default=1)
+def main(iterations: int, attempts: int) -> None:
     users = [FindCycleUser.model_validate(user) for user in hjson.load(sys.stdin)]
     graph = Graph()
     for first_index, first_user in enumerate(users):
@@ -24,10 +26,21 @@ def main(iterations: int) -> None:
                 continue
             if first_user.location in second_user.selected:
                 graph.add(Edge(Vertex(second_index), Vertex(first_index)))
-    annealing = SimulatedAnnealing(iterations, graph)
-    result = annealing.run()
+    randgen = random.Random()
+    result = None
+    for attempt in range(attempts):
+        annealing = SimulatedAnnealing(
+            iterations,
+            graph,
+            order=result.order if result else None,
+            randgen=randgen,
+        )
+        result = annealing.run()
+    if result is None:
+        msg = "haven't attempted to run"
+        raise ValueError(msg)
     order = [users[index].slug for index in result.order]
-    print(result.missed, order)
+    print(result.missed, ",".join(order))
 
 
 if __name__ == "__main__":
