@@ -15,5 +15,6 @@ COPY pyproject.toml poetry.lock .
 RUN poetry install --no-ansi --without dev
 
 COPY "sesanta" "/app/sesanta"
+COPY "utils" "/app/utils"
 ENTRYPOINT ["poetry", "run"]
 CMD ["python", "-m", "sesanta.bot"]
