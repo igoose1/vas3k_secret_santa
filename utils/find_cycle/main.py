@@ -18,15 +18,16 @@ class FindCycleUser(User):
 def main(iterations: int) -> None:
     users = [FindCycleUser.model_validate(user) for user in hjson.load(sys.stdin)]
     graph = Graph()
-    for first_user in users:
-        for second_user in users:
+    for first_index, first_user in enumerate(users):
+        for second_index, second_user in enumerate(users):
             if first_user.slug == second_user.slug:
                 continue
             if first_user.location in second_user.selected:
-                graph.add(Edge(Vertex(second_user.slug), Vertex(first_user.slug)))
+                graph.add(Edge(Vertex(second_index), Vertex(first_index)))
     annealing = SimulatedAnnealing(iterations, graph)
     result = annealing.run()
-    print(result)
+    order = [users[index].slug for index in result.order]
+    print(result.missed, order)
 
 
 if __name__ == "__main__":

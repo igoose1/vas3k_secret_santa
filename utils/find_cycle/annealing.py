@@ -12,10 +12,6 @@ class Result:
     missed: int
     order: list[Vertex]
 
-    def __str__(self) -> str:
-        order = ",".join(self.order)
-        return f"{self.missed}\t{order}"
-
 
 class SimulatedAnnealing:
     def __init__(

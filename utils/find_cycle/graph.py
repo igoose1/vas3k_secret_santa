@@ -2,7 +2,7 @@ import dataclasses
 import random
 from typing import NewType
 
-Vertex = NewType("Vertex", str)
+Vertex = NewType("Vertex", int)
 
 
 @dataclasses.dataclass(slots=True, frozen=True)
