@@ -27,20 +27,23 @@ def main(iterations: int, attempts: int) -> None:
             if first_user.location in second_user.selected:
                 graph.add(Edge(Vertex(second_index), Vertex(first_index)))
     randgen = random.Random()
-    result = None
+    best = None
+    local = None
     for attempt in range(attempts):
         annealing = SimulatedAnnealing(
             iterations,
             graph,
-            order=result.order if result else None,
+            order=local.order if local else None,
             randgen=randgen,
         )
-        result = annealing.run()
-    if result is None:
+        local = annealing.run()
+        if best is None or local.missed < best.missed:
+            best = local
+    if best is None:
         msg = "haven't attempted to run"
         raise ValueError(msg)
-    order = [users[index].slug for index in result.order]
-    print(result.missed, ",".join(order))
+    order = [users[index].slug for index in best.order]
+    print(best.missed, ",".join(order))
 
 
 if __name__ == "__main__":
