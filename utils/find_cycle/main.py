@@ -4,14 +4,9 @@ import sys
 import click
 import hjson
 
-from utils.basic import User
 from utils.find_cycle.annealing import SimulatedAnnealing
-from utils.find_cycle.graph import Edge, Graph, Vertex
-
-
-class FindCycleUser(User):
-    selected: set[str]
-    location: str
+from utils.find_cycle.graph import Graph
+from utils.find_cycle.user import FindCycleUser
 
 
 @click.command()
@@ -19,13 +14,7 @@ class FindCycleUser(User):
 @click.option("--attempts", default=1)
 def main(iterations: int, attempts: int) -> None:
     users = [FindCycleUser.model_validate(user) for user in hjson.load(sys.stdin)]
-    graph = Graph()
-    for first_index, first_user in enumerate(users):
-        for second_index, second_user in enumerate(users):
-            if first_user.slug == second_user.slug:
-                continue
-            if first_user.location in second_user.selected:
-                graph.add(Edge(Vertex(second_index), Vertex(first_index)))
+    graph = Graph.from_users(users)
     randgen = random.Random()
     best = None
     local = None

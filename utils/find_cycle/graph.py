@@ -1,6 +1,8 @@
 import dataclasses
 import random
-from typing import NewType
+from typing import NewType, Self
+
+from utils.find_cycle.user import FindCycleUser
 
 Vertex = NewType("Vertex", int)
 
@@ -16,6 +18,17 @@ class Graph:
         self.__edges: set[Edge] = set()
         self.__vertexes: set[Vertex] = set()
         self.__random = random.Random()
+
+    @classmethod
+    def from_users(cls, users: list[FindCycleUser]) -> Self:
+        graph = cls()
+        for first_index, first_user in enumerate(users):
+            for second_index, second_user in enumerate(users):
+                if first_user.slug == second_user.slug:
+                    continue
+                if first_user.location in second_user.selected:
+                    graph.add(Edge(Vertex(second_index), Vertex(first_index)))
+        return graph
 
     def add(self, edge: Edge) -> None:
         self.__edges.add(edge)
