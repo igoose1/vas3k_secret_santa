@@ -1,5 +1,6 @@
+import collections
 import dataclasses
-import random
+from collections.abc import Sequence
 from typing import NewType, Self
 
 from utils.find_cycle.user import FindCycleUser
@@ -15,38 +16,32 @@ class Edge:
 
 class Graph:
     def __init__(self) -> None:
-        self.__edges: set[Edge] = set()
-        self.__vertexes: set[Vertex] = set()
-        self.__random = random.Random()
+        self.__connected_to: dict[Vertex, set[Vertex]] = collections.defaultdict(set)
 
     @classmethod
     def from_users(cls, users: list[FindCycleUser]) -> Self:
         graph = cls()
         for first_index, first_user in enumerate(users):
             for second_index, second_user in enumerate(users):
-                if first_user.slug == second_user.slug:
+                if first_index == second_index:
                     continue
                 if first_user.location in second_user.selected:
                     graph.add(Edge(Vertex(second_index), Vertex(first_index)))
         return graph
 
+    @classmethod
+    def to_user(cls, users: list[FindCycleUser], vertex: Vertex) -> FindCycleUser:
+        return users[vertex]
+
     def add(self, edge: Edge) -> None:
-        self.__edges.add(edge)
-        self.__vertexes.add(edge.from_)
-        self.__vertexes.add(edge.to)
+        self.__connected_to[edge.from_].add(edge.to)
 
-    def edge_exists(self, edge: Edge) -> bool:
-        return edge in self.__edges
-
-    def exists(self, from_: Vertex, to: Vertex) -> bool:
-        return self.edge_exists(Edge(from_, to))
+    def connected_from(self, vertex: Vertex) -> set[Vertex]:
+        return self.__connected_to[vertex]
 
     @property
-    def vertexes(self) -> list[Vertex]:
-        """Returns vertexes in a random order."""
-        result = list(self.__vertexes)
-        self.__random.shuffle(result)
-        return result
+    def vertexes(self) -> Sequence[Vertex]:
+        return list(self.__connected_to.keys())
 
     def __len__(self) -> int:
-        return len(self.__vertexes)
+        return len(self.__connected_to)
