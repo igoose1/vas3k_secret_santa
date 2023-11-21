@@ -1,4 +1,3 @@
-import json as jsonlib
 import sys
 
 import asyncclick as click
@@ -15,8 +14,7 @@ UserListAdapter = TypeAdapter(list[User])
 
 @click.command()
 @click.option("--completed-only", default=False, help="Only completed")
-@click.option("--json", default=False, help="Print in JSON format")
-async def main(completed_only: bool, json: bool) -> None:
+async def main(completed_only: bool) -> None:
     """Export users to stdout."""
     db = AsyncIOMotorClient(str(settings.mongo_uri))[settings.mongo_db]
     collection = UserCollection(db)
@@ -34,10 +32,7 @@ async def main(completed_only: bool, json: bool) -> None:
         )
 
     adapted_result = UserListAdapter.dump_python(result)
-    if json:
-        jsonlib.dump(adapted_result, sys.stdout, ensure_ascii=False)
-    else:
-        hjson.dump(adapted_result, sys.stdout)
+    hjson.dump(adapted_result, sys.stdout)
 
 
 if __name__ == "__main__":
