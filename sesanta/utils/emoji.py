@@ -3,4 +3,4 @@ import random
 
 def random_cool_emoji() -> str:
     sample = ["🤘", "👩‍💻‍", "💯", "🔥", "❤️‍🔥"]
-    return random.choice(sample)  # noqa: S311
+    return random.choice(sample)

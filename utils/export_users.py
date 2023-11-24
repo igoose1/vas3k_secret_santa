@@ -25,6 +25,7 @@ async def main(completed_only: bool) -> None:
         result.append(
             User(
                 slug=user.slug,
+                telegram_id=user.telegram_id,
                 location=user.location,
                 selected=list(user.selected_countries),
                 is_completed=user.is_completed,
