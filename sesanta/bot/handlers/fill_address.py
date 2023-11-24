@@ -21,4 +21,4 @@ async def handler(
         telegram_id=message.chat.id,
         address=address,
     )
-    await message.answer(f"Записали!\n\n<pre>{address}</pre>")
+    await message.answer(f"Записали твои детали доставки!\n\n<pre>{address}</pre>")
