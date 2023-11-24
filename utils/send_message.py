@@ -7,7 +7,6 @@ import hjson
 from aiogram import Bot as AiogramBot
 from aiogram.client.session.aiohttp import AiohttpSession
 from aiogram.enums.parse_mode import ParseMode
-from aiogram.exceptions import TelegramBadRequest
 from pydantic import TypeAdapter
 
 from sesanta.settings import settings
@@ -38,7 +37,7 @@ async def main(message: str, dry_run: bool) -> None:
                     user.telegram_id,
                     message_content,
                 )
-            except TelegramBadRequest as exc:
+            except Exception as exc:
                 print(f"{user}: {exc}")
             await asyncio.sleep(1 / 15)
 
