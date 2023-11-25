@@ -15,6 +15,14 @@ class ChatInfo(pydantic.BaseModel):
     # random number of zeroes so length of original data can't be easily extracted.
     padding: str
 
+    @property
+    def me(self) -> str:
+        return self.sender
+
+    @property
+    def they(self) -> str:
+        return self.receiver
+
 
 class ExpiredError(ValueError):
     """Raised when data was expired."""

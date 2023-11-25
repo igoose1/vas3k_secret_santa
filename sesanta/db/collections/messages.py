@@ -8,11 +8,11 @@ from sesanta.db.schemas.messages import MessageSchema
 class MessageCollection(AbstractCollection):
     name: ClassVar[str] = "messages"
 
-    async def get_chat(self, slug: str) -> list[MessageSchema]:
+    async def get_chat(self, sender: str, receiver: str) -> list[MessageSchema]:
         filter_ = {
             "$or": [
-                {"sender": slug},
-                {"receiver": slug},
+                {"sender": sender, "receiver": receiver},
+                {"sender": receiver, "receiver": sender},
             ],
         }
         cursor = self.collection.find(filter_).sort({"timestamp": 1})
