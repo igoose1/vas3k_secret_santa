@@ -16,5 +16,6 @@ RUN poetry install --no-ansi --without dev
 
 COPY "sesanta" "/app/sesanta"
 COPY "utils" "/app/utils"
+COPY "zstddict" "/app/zstddict"
 ENTRYPOINT ["poetry", "run"]
 CMD ["python", "-m", "sesanta.bot"]

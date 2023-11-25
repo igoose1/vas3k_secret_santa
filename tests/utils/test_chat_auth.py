@@ -1,4 +1,5 @@
 import datetime
+import pathlib
 
 import pytest
 import time_machine
@@ -8,7 +9,7 @@ from sesanta.utils.chat_auth import ChatAuthenticator, ExpiredError
 
 @pytest.fixture
 def auth() -> ChatAuthenticator:
-    return ChatAuthenticator("fake secret")
+    return ChatAuthenticator("fake secret", pathlib.Path("zstddict"))
 
 
 def test_forth_and_back(auth) -> None:

@@ -1,4 +1,5 @@
 import datetime
+import pathlib
 from typing import Annotated
 
 from fastapi import Depends, FastAPI, Form, HTTPException, Request, status
@@ -12,7 +13,7 @@ from sesanta.settings import settings
 from sesanta.utils.chat_auth import ChatAuthenticator, ChatInfo, ExpiredError
 
 db = AsyncIOMotorClient(str(settings.mongo_uri))[settings.mongo_db]
-chat_authenticator = ChatAuthenticator(settings.secret)
+chat_authenticator = ChatAuthenticator(settings.secret, pathlib.Path("zstddict"))
 templates = Jinja2Templates("sesanta/chats/templates")
 
 app = FastAPI()
