@@ -5,6 +5,8 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
+    secret: str
+
     bot_token: str
 
     mongo_uri: MongoDsn

@@ -1,5 +1,6 @@
 import base64
 import datetime
+import random
 
 import pydantic
 from nacl.hash import blake2b
@@ -11,6 +12,9 @@ class ChatInfo(pydantic.BaseModel):
     receiver: str
     exp: datetime.datetime
 
+    # random number of zeroes so length of original data can't be easily extracted.
+    padding: str
+
 
 class ExpiredError(ValueError):
     """Raised when data was expired."""
@@ -18,10 +22,12 @@ class ExpiredError(ValueError):
 
 class ChatAuthenticator:
     def __init__(self, secret: str):
-        key = blake2b(secret.encode(), digest_size=16)
+        key = blake2b(f"auth-{secret}".encode(), digest_size=16)
         self.__box = SecretBox(key)
+        padgen = random.Random(blake2b(f"padding-{secret}".encode()))
+        self.__padding_length = padgen.randrange(8)
 
-    def authenticate(self, data: str) -> ChatInfo:
+    def __call__(self, data: str) -> ChatInfo:
         """Decrypt `data` to `ChatInfo`.
 
         Raises ExpiredError when data was expired."""
@@ -39,11 +45,12 @@ class ChatAuthenticator:
 
     def generate(self, sender: str, receiver: str, expire_in: datetime.timedelta) -> str:
         """Return encrypted `ChatInfo` encoded in url-safe base64."""
-        exp_chat_info = ChatInfo(
+        chat_info = ChatInfo(
             sender=sender,
             receiver=receiver,
             exp=datetime.datetime.now(datetime.UTC) + expire_in,
+            padding="0" * self.__padding_length,
         )
-        encrypted = self.__box.encrypt(exp_chat_info.model_dump_json().encode())
+        encrypted = self.__box.encrypt(chat_info.model_dump_json().encode())
         encoded = base64.urlsafe_b64encode(encrypted)
         return encoded.decode()
