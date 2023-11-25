@@ -12,9 +12,15 @@ def auth() -> ChatAuthenticator:
 
 
 def test_forth_and_back(auth) -> None:
-    string = auth.generate("bob", "alice", datetime.timedelta(hours=1))
+    string = auth.generate("bob", "alice", "bob", datetime.timedelta(hours=1))
     assert auth(string).sender == "bob"
     assert auth(string).receiver == "alice"
+    assert auth(string).santa == "bob"
+
+
+def test_wrong_santa(auth) -> None:
+    with pytest.raises(ValueError):
+        _ = auth.generate("bob", "alice", "eva", datetime.timedelta(hours=1))
 
 
 def test_on_random_data(auth) -> None:
@@ -32,7 +38,7 @@ def test_on_random_data(auth) -> None:
 
 def test_expired(auth) -> None:
     with time_machine.travel(0, tick=False) as traveller:
-        string = auth.generate("bob", "alice", datetime.timedelta(hours=1))
+        string = auth.generate("bob", "alice", "bob", datetime.timedelta(hours=1))
         auth(string)  # shouldn't fail
         traveller.move_to(datetime.timedelta(hours=1, seconds=1))
         with pytest.raises(ExpiredError):
