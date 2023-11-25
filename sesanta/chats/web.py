@@ -1,8 +1,11 @@
 import datetime
 from typing import Annotated
 
-from fastapi import Depends, FastAPI, HTTPException, Query, Request, status
+from fastapi import Depends, FastAPI, Form, HTTPException, Request, status
+from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.templating import Jinja2Templates
 from motor.motor_asyncio import AsyncIOMotorClient
+from starlette.templating import _TemplateResponse
 
 from sesanta.db.collections.messages import MessageCollection
 from sesanta.settings import settings
@@ -10,12 +13,13 @@ from sesanta.utils.chat_auth import ChatAuthenticator, ChatInfo, ExpiredError
 
 db = AsyncIOMotorClient(str(settings.mongo_uri))[settings.mongo_db]
 chat_authenticator = ChatAuthenticator(settings.secret)
+templates = Jinja2Templates("sesanta/chats/templates")
 
 app = FastAPI()
 
 
 def get_chat_info(
-    data: Annotated[str, Query(alias="d")],
+    data: str,
 ) -> ChatInfo:
     try:
         return chat_authenticator(data)
@@ -31,24 +35,38 @@ def get_chat_info(
         )
 
 
-@app.get("/c/")
+@app.get("/c/{data}/", response_class=HTMLResponse)
 async def read_chat(
     request: Request,
     chat_info: ChatInfo = Depends(get_chat_info),
-) -> str:
+) -> _TemplateResponse:
     messages = await MessageCollection(db).get_chat(chat_info.me, chat_info.they)
-    return f"Чат {chat_info.sender} -> {chat_info.receiver}, сообщения: {messages}"
+    return templates.TemplateResponse(
+        "chat.html",
+        {
+            "request": request,
+            "messages": messages,
+            "santa": chat_info.santa,
+            "grandchild": chat_info.grandchild,
+            "me": chat_info.me,
+        },
+    )
 
 
-@app.post("/c/")
+@app.post("/c/{data}/")
 async def send_message(
     request: Request,
-    text: str,
+    data: str,
+    text: Annotated[str, Form()],
     chat_info: ChatInfo = Depends(get_chat_info),
-) -> None:
+) -> RedirectResponse:
     await MessageCollection(db).new(
         chat_info.me,
         chat_info.they,
         text,
         datetime.datetime.now(datetime.UTC),
+    )
+    return RedirectResponse(
+        request.url_for("read_chat", data=data),
+        status.HTTP_303_SEE_OTHER,
     )

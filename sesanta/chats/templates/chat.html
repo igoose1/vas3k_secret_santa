@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% if me == santa %}
+    <title>Чат с {{ grandchild }}</title>
+    {% else %}
+    <title>Чат с Сантой</title>
+    {% endif %}
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+
+        .chat {
+            max-width: 60%;
+            margin: auto;
+            border-radius: .3em;
+            overflow: hidden;
+            box-shadow: 0 0 .4em rgba(0, 0, 0, .1);
+        }
+
+        .message {
+            padding: .5em;
+            border-bottom: .1em solid #ddd;
+        }
+
+        .sender {
+            font-weight: bold;
+        }
+
+        form {
+            display: flex;
+            padding: .5em;
+            background-color: #fff;
+        }
+
+        input {
+        	flex: 1;
+        }
+
+        button {
+            margin-left: 1em;
+            padding: .5em 1em;
+            background-color: #e87493;
+            color: #fff;
+            border: none;
+            border-radius: .3em;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat" id="chat">
+    	{% for message in messages %}
+        <div class="message">
+        	{% if message.sender == me %}
+            	{% if message.sender == santa %}
+            		<div class="sender">Санта (я):</div>
+            	{% else %}
+            		<div class="sender">{{ message.sender }} (я):</div>
+            	{% endif %}
+            {% else %}
+            	{% if message.sender == santa %}
+            		<div class="sender">Санта:</div>
+            	{% else %}
+            		<div class="sender">{{ message.sender }}:</div>
+            	{% endif %}
+            {% endif %}
+            <p>{{ message.text }}</p>
+        </div>
+        {% else %}
+        <div class="message">
+        	<p>Между вами пока нет сообщений!</p>
+        </div>
+        {% endfor %}
+
+    	<div>
+    		<form method="post">
+    			<input name="text" required>
+    			<button>Отправить</button>
+    		</form>
+    	</div>
+    </div>
+</body>
+</html>

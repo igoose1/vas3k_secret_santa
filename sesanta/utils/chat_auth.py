@@ -1,6 +1,7 @@
 import base64
 import datetime
 import random
+from typing import Self
 
 import pydantic
 from nacl.hash import blake2b
@@ -10,6 +11,7 @@ from nacl.secret import SecretBox
 class ChatInfo(pydantic.BaseModel):
     sender: str
     receiver: str
+    santa: str
     exp: datetime.datetime
 
     # random number of zeroes so length of original data can't be easily extracted.
@@ -22,6 +24,17 @@ class ChatInfo(pydantic.BaseModel):
     @property
     def they(self) -> str:
         return self.receiver
+
+    @property
+    def grandchild(self) -> str:
+        return self.sender if self.santa != self.sender else self.receiver
+
+    @pydantic.model_validator(mode="after")
+    def check_santa(self) -> Self:
+        if self.santa not in [self.sender, self.receiver]:
+            msg = "santa must be one of chat participant"
+            raise ValueError(msg)
+        return self
 
 
 class ExpiredError(ValueError):
@@ -51,11 +64,18 @@ class ChatAuthenticator:
             raise ExpiredError(msg)
         return ChatInfo.model_validate(exp_chat_info, strict=True)
 
-    def generate(self, sender: str, receiver: str, expire_in: datetime.timedelta) -> str:
+    def generate(
+        self,
+        sender: str,
+        receiver: str,
+        santa: str,
+        expire_in: datetime.timedelta,
+    ) -> str:
         """Return encrypted `ChatInfo` encoded in url-safe base64."""
         chat_info = ChatInfo(
             sender=sender,
             receiver=receiver,
+            santa=santa,
             exp=datetime.datetime.now(datetime.UTC) + expire_in,
             padding="0" * self.__padding_length,
         )
