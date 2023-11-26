@@ -7,6 +7,7 @@ services:
       - mongo
     restart: always
     environment:
+      SESANTA_SERVING_STATUS: $SESANTA_SERVING_STATUS
       SESANTA_CHATS_HOST: 0.0.0.0
       SESANTA_CHATS_PORT: $SESANTA_CHATS_PORT
       SESANTA_SECRET: $SESANTA_SECRET
@@ -29,6 +30,7 @@ services:
       - mongo
     restart: always
     environment:
+      SESANTA_SERVING_STATUS: $SESANTA_SERVING_STATUS
       SESANTA_CHATS_HOST: 0.0.0.0
       SESANTA_CHATS_PORT: $SESANTA_CHATS_PORT
       SESANTA_SECRET: $SESANTA_SECRET
