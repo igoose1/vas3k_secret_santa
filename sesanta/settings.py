@@ -7,6 +7,8 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     secret: str
 
+    chats_expire_in: datetime.timedelta = datetime.timedelta(hours=12)
+
     bot_token: str
 
     mongo_uri: MongoDsn

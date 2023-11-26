@@ -1,7 +1,8 @@
-import datetime
 import pathlib
 from typing import Annotated
 
+from aiogram import Bot as AiogramBot
+from aiogram.enums.parse_mode import ParseMode
 from fastapi import Depends, FastAPI, Form, HTTPException, Request, status
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
@@ -9,12 +10,14 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from starlette.templating import _TemplateResponse
 
 from sesanta.db.collections.messages import MessageCollection
+from sesanta.services.message_creator import MessageCreator
 from sesanta.settings import settings
 from sesanta.utils.chat_auth import ChatAuthenticator, ChatInfo, ExpiredError
 
 db = AsyncIOMotorClient(str(settings.mongo_uri))[settings.mongo_db]
 chat_authenticator = ChatAuthenticator(settings.secret, pathlib.Path("zstddict"))
 templates = Jinja2Templates("sesanta/chats/templates")
+bot = AiogramBot(settings.bot_token, parse_mode=ParseMode.HTML)
 
 app = FastAPI()
 
@@ -61,11 +64,17 @@ async def send_message(
     text: Annotated[str, Form()],
     chat_info: ChatInfo = Depends(get_chat_info),
 ) -> RedirectResponse:
-    await MessageCollection(db).new(
-        chat_info.me,
-        chat_info.they,
+    receiver_data = chat_authenticator.generate(
+        sender=chat_info.receiver,
+        receiver=chat_info.sender,  # they aren't messed
+        santa=chat_info.santa,
+        expire_in=settings.chats_expire_in,
+    )
+    url = request.url_for("read_chat", data=receiver_data)
+    await MessageCreator(db, bot)(
+        chat_info,
         text,
-        datetime.datetime.now(datetime.UTC),
+        str(url),
     )
     return RedirectResponse(
         request.url_for("read_chat", data=data),
