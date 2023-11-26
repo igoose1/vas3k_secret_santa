@@ -17,11 +17,18 @@
         }
 
         .chat {
+            min-width: 0;
             max-width: 60%;
             margin: auto;
             border-radius: .3em;
             overflow: hidden;
             box-shadow: 0 0 .4em rgba(0, 0, 0, .1);
+        }
+
+        @media only screen and (max-width: 600px) {
+            .chat {
+                max-width: 100%;
+            }
         }
 
         .message {
@@ -40,7 +47,7 @@
         }
 
         input {
-        	flex: 1;
+            flex: 1;
         }
 
         button {
