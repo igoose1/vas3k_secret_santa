@@ -12,9 +12,11 @@ from sesanta.bot.handlers.understood_select_countries import (
 from sesanta.bot.handlers.understood_set_location import (
     router as understood_set_location_router,
 )
+from sesanta.bot.handlers.wait_for_drawing import router as wait_for_drawing_router
 
 router = Router()
 router.include_routers(
+    wait_for_drawing_router,
     start_router,
     set_location_router,
     select_countries_router,

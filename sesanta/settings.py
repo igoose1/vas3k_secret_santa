@@ -1,10 +1,19 @@
 import datetime
+import enum
 
 from pydantic import MongoDsn
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
+class ServingStatus(enum.StrEnum):
+    COLLECTING_FORMS = "collecting"
+    DRAWING_LOTS = "drawing"
+    SENDING_GIFTS = "sending"
+
+
 class Settings(BaseSettings):
+    serving_status: ServingStatus
+
     secret: str
 
     chats_host: str
