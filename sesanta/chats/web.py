@@ -29,7 +29,7 @@ def get_chat_info(
         return chat_authenticator(data)
     except ExpiredError:
         raise HTTPException(
-            status.HTTP_401,
+            status.HTTP_401_UNAUTHORIZED,
             "Ссылка истекла",
         )
     except ValueError:

@@ -7,6 +7,9 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     secret: str
 
+    chats_host: str
+    chats_port: int
+    chats_workers: int = 4
     chats_expire_in: datetime.timedelta = datetime.timedelta(hours=12)
 
     bot_token: str
