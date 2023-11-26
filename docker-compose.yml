@@ -1,10 +1,10 @@
 ---
-version: '3.9'
+version: "3.9"
 services:
   bot:
     build: .
     depends_on:
-    - mongo
+      - mongo
     restart: always
     environment:
       SESANTA_BOT_TOKEN: $SESANTA_BOT_TOKEN
@@ -25,12 +25,12 @@ services:
         DB_URI: mongodb://mongo:27017
     restart: always
     depends_on:
-    - mongo
+      - mongo
     volumes:
-    - ./dump:/dump
+      - ./dump:/dump
 
   mongo:
     image: mongo:7.0.2
     restart: always
     volumes:
-    - ./dbdata:/data/db
+      - ./dbdata:/data/db
