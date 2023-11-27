@@ -4,6 +4,7 @@ import typing
 import pydantic
 import pydantic_core
 from bson import ObjectId
+from pydantic.json_schema import JsonSchemaValue
 
 
 class ObjectIdPydanticAnnotation:
@@ -35,7 +36,7 @@ class ObjectIdPydanticAnnotation:
         cls,
         _core_schema,
         handler,
-    ) -> pydantic.json_schema.JsonSchemaValue:
+    ) -> JsonSchemaValue:
         return handler(pydantic_core.core_schema.str_schema())
 
 
