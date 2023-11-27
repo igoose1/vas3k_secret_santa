@@ -7,9 +7,11 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
 from sesanta.bot.filters.eligible import IsEligibleFilter
+from sesanta.bot.filters.serving_status import ServingStatusFilter
 from sesanta.db.collections.users import UserCollection
 from sesanta.services.country_chooser import COUNTRIES, HASH_TO_COUNTRY, hash_country
 from sesanta.services.user_getter import UserGetter
+from sesanta.serving_status import ServingStatus
 
 router = Router()
 
@@ -81,7 +83,11 @@ async def pager_handler(
     )
 
 
-@router.callback_query(SetLocationCallback.filter(), IsEligibleFilter())
+@router.callback_query(
+    SetLocationCallback.filter(),
+    IsEligibleFilter(),
+    ServingStatusFilter(ServingStatus.COLLECTING_FORMS),
+)
 async def callback_handler(
     callback_query: CallbackQuery,
     callback_data: SetLocationCallback,

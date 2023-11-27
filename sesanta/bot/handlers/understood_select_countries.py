@@ -4,14 +4,20 @@ from aiogram.types.reply_keyboard_remove import ReplyKeyboardRemove
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
 from sesanta.bot.filters import IsEligibleFilter
+from sesanta.bot.filters.serving_status import ServingStatusFilter
 from sesanta.bot.handlers.select_countries import generate_select_countries_keyboard
 from sesanta.services.user_getter import UserGetter
+from sesanta.serving_status import ServingStatus
 
 router = Router()
 UNDERSTOOD_TEXT = "Понятно. Надо будет отметить, куда я смогу отправить подарок"
 
 
-@router.message(F.text == UNDERSTOOD_TEXT, IsEligibleFilter())
+@router.message(
+    F.text == UNDERSTOOD_TEXT,
+    IsEligibleFilter(),
+    ServingStatusFilter(ServingStatus.COLLECTING_FORMS),
+)
 async def handler(
     message: Message,
     db: AsyncIOMotorDatabase,

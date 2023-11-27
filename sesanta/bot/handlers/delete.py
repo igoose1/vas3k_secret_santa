@@ -7,7 +7,9 @@ from aiogram.types import CallbackQuery, Message
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
+from sesanta.bot.filters.serving_status import ServingStatusFilter
 from sesanta.services.user_deleter import UserDeleter
+from sesanta.serving_status import ServingStatus
 
 router = Router()
 
@@ -18,7 +20,7 @@ class ConfirmDeletionCallback(CallbackData, prefix="condel"):
     ...
 
 
-@router.message(Command("delete"))
+@router.message(Command("delete"), ServingStatusFilter(ServingStatus.COLLECTING_FORMS))
 async def handler(
     message: Message,
 ) -> None:
@@ -33,7 +35,10 @@ async def handler(
     )
 
 
-@router.callback_query(ConfirmDeletionCallback.filter())
+@router.callback_query(
+    ConfirmDeletionCallback.filter(),
+    ServingStatusFilter(ServingStatus.COLLECTING_FORMS),
+)
 async def confirm_handler(
     callback_query: CallbackQuery,
     callback_data: ConfirmDeletionCallback,

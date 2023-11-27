@@ -1,7 +1,8 @@
 from aiogram.filters import Filter
 from aiogram.types import Message
 
-from sesanta.settings import ServingStatus, settings
+from sesanta.serving_status import ServingStatus
+from sesanta.settings import settings
 
 
 class ServingStatusFilter(Filter):

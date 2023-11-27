@@ -7,6 +7,7 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
 from sesanta.bot.filters.eligible import IsEligibleFilter
+from sesanta.bot.filters.serving_status import ServingStatusFilter
 from sesanta.db.collections.users import UserCollection
 from sesanta.services.country_chooser import (
     COUNTRIES,
@@ -15,6 +16,7 @@ from sesanta.services.country_chooser import (
     hash_country,
 )
 from sesanta.services.user_getter import UserGetter
+from sesanta.serving_status import ServingStatus
 from sesanta.utils.emoji import random_cool_emoji
 from sesanta.utils.plural import RuPlural
 
@@ -130,7 +132,11 @@ async def pager_handler(
     )
 
 
-@router.callback_query(SelectCountriesCallback.filter(), IsEligibleFilter())
+@router.callback_query(
+    SelectCountriesCallback.filter(),
+    IsEligibleFilter(),
+    ServingStatusFilter(ServingStatus.COLLECTING_FORMS),
+)
 async def callback_handler(
     callback_query: CallbackQuery,
     callback_data: SelectCountriesCallback,
@@ -164,7 +170,11 @@ async def callback_handler(
     )
 
 
-@router.callback_query(SelectGroupCallback.filter(), IsEligibleFilter())
+@router.callback_query(
+    SelectGroupCallback.filter(),
+    IsEligibleFilter(),
+    ServingStatusFilter(ServingStatus.COLLECTING_FORMS),
+)
 async def group_handler(
     callback_query: CallbackQuery,
     callback_data: SelectGroupCallback,
@@ -191,7 +201,11 @@ async def group_handler(
     )
 
 
-@router.callback_query(UnselectAllCallback.filter(), IsEligibleFilter())
+@router.callback_query(
+    UnselectAllCallback.filter(),
+    IsEligibleFilter(),
+    ServingStatusFilter(ServingStatus.COLLECTING_FORMS),
+)
 async def unselect_all_handler(
     callback_query: CallbackQuery,
     callback_data: UnselectAllCallback,

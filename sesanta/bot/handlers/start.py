@@ -4,6 +4,7 @@ from aiogram.types import Message
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
+from sesanta.bot.filters.serving_status import ServingStatusFilter
 from sesanta.bot.handlers.understood_set_location import (
     UNDERSTOOD_TEXT as UNDERSTOOD_SET_LOCATION,
 )
@@ -11,13 +12,14 @@ from sesanta.services.club_loader import ClubMemberLoader, ClubMemberNotFoundErr
 from sesanta.services.user_creator import UserUpdater
 from sesanta.services.user_eligibility_setter import UserEligibilitySetter
 from sesanta.services.user_is_eligible import IsUserEligible
+from sesanta.serving_status import ServingStatus
 from sesanta.settings import settings
 from sesanta.utils.plural import RuPlural
 
 router = Router()
 
 
-@router.message(Command("start"))
+@router.message(Command("start"), ServingStatusFilter(ServingStatus.COLLECTING_FORMS))
 async def handler(
     message: Message,
     db: AsyncIOMotorDatabase,

@@ -4,10 +4,12 @@ from aiogram.types import Message
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
 from sesanta.bot.filters import IsEligibleFilter
+from sesanta.bot.filters.serving_status import ServingStatusFilter
 from sesanta.db.schemas.users import UserSchema
 from sesanta.services.country_chooser import CountryChooser, hash_country
 from sesanta.services.user_getter import UserGetter
 from sesanta.services.user_set_completeness import UserCompletenessSetter
+from sesanta.serving_status import ServingStatus
 
 router = Router()
 
@@ -41,7 +43,11 @@ async def is_able_to_continue(
         raise CantContinueError
 
 
-@router.message(Command("complete"), IsEligibleFilter())
+@router.message(
+    Command("complete"),
+    IsEligibleFilter(),
+    ServingStatusFilter(ServingStatus.COLLECTING_FORMS),
+)
 async def handler(
     message: Message,
     db: AsyncIOMotorDatabase,
