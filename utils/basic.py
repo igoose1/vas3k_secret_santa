@@ -8,3 +8,5 @@ class User(pydantic.BaseModel):
     location: str | None
     selected: list[str]
     is_completed: bool
+    santa: str | None
+    grandchildren: list[str]

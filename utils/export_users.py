@@ -43,6 +43,8 @@ async def main(
                 location=user.location,
                 selected=list(user.selected_countries),
                 is_completed=user.is_completed,
+                santa=user.santa,
+                grandchildren=user.grandchildren,
             ),
         )
 
