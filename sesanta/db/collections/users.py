@@ -141,6 +141,14 @@ class UserCollection(AbstractCollection):
             {"telegram_id": telegram_id},
         )
 
+    async def clear_santa_information(
+        self,
+    ) -> None:
+        await self.collection.update_many(
+            {},
+            {"$unset": {"santa": None, "grandchildren": None}},
+        )
+
     async def set_santa_information(
         self,
         slug: str,

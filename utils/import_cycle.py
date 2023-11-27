@@ -19,6 +19,7 @@ async def main() -> None:
 
     slugs = sys.stdin.read().strip().split(",")
 
+    await collection.clear_santa_information()
     for index, user in enumerate(slugs):
         santa, grandchild = slugs[index - 1], slugs[(index + 1) % len(slugs)]
         await collection.set_santa_information(
