@@ -3,6 +3,7 @@ from aiogram import Router
 from sesanta.bot.handlers.complete import router as complete_router
 from sesanta.bot.handlers.delete import router as delete_router
 from sesanta.bot.handlers.fill_address import router as fill_address_router
+from sesanta.bot.handlers.get_chats import router as get_chats_router
 from sesanta.bot.handlers.select_countries import router as select_countries_router
 from sesanta.bot.handlers.set_location import router as set_location_router
 from sesanta.bot.handlers.start import router as start_router
@@ -17,6 +18,7 @@ from sesanta.bot.handlers.wait_for_drawing import router as wait_for_drawing_rou
 router = Router()
 router.include_routers(
     wait_for_drawing_router,
+    get_chats_router,
     start_router,
     set_location_router,
     select_countries_router,

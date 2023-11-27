@@ -9,6 +9,7 @@ from sesanta.db.schemas.users import (
     UserSetCompletenessSchema,
     UserSetEligibilitySchema,
     UserSetLocationSchema,
+    UserSetSantaSchema,
 )
 from sesanta.services.club_loader import ClubMember
 
@@ -138,4 +139,18 @@ class UserCollection(AbstractCollection):
     ) -> None:
         await self.collection.delete_one(
             {"telegram_id": telegram_id},
+        )
+
+    async def set_santa_information(
+        self,
+        slug: str,
+        santa: str,
+        grandchild: str,
+    ) -> None:
+        await self.collection.update_one(
+            {"slug": slug},
+            {
+                "$set": UserSetSantaSchema(santa=santa).dict(),
+                "$addToSet": {"grandchildren": grandchild},
+            },
         )

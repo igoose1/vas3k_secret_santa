@@ -30,10 +30,16 @@ class UserFillAddressSchema(AbstractSchema):
     address: str | None = None
 
 
+class UserSetSantaSchema(AbstractSchema):
+    santa: str | None = None
+
+
 class UserSchema(
     UserCreateSchema,
     UserSetEligibilitySchema,
     UserSetLocationSchema,
     UserFillAddressSchema,
+    UserSetSantaSchema,
 ):
     selected_countries: set[str] = pydantic.Field(default_factory=set)
+    grandchildren: list[str] = pydantic.Field(default_factory=list)

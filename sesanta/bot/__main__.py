@@ -1,10 +1,12 @@
 import asyncio
+import pathlib
 
 from motor.motor_asyncio import AsyncIOMotorClient
 
 from sesanta.bot import Bot
 from sesanta.services.club_loader import ClubMemberLoader
 from sesanta.settings import settings
+from sesanta.utils.chat_auth import ChatAuthenticator
 
 
 async def main() -> None:
@@ -15,6 +17,10 @@ async def main() -> None:
     bot.add_dependency(
         "db",
         db_client[settings.mongo_db],
+    )
+    bot.add_dependency(
+        "chat_authenticator",
+        ChatAuthenticator(settings.secret, pathlib.Path("zstddict")),
     )
     bot.add_dependency(
         "club_member_loader",
