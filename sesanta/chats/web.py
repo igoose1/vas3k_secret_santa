@@ -12,7 +12,7 @@ from starlette.templating import _TemplateResponse
 from sesanta.db.collections.messages import MessageCollection
 from sesanta.services.message_creator import MessageCreator
 from sesanta.settings import settings
-from sesanta.utils.chat_auth import ChatAuthenticator, ChatInfo, ExpiredError
+from sesanta.utils.chat_auth import ChatAuthenticator, ChatData, ChatInfo, ExpiredError
 
 db = AsyncIOMotorClient(str(settings.mongo_uri))[settings.mongo_db]
 chat_authenticator = ChatAuthenticator(settings.secret, pathlib.Path("zstddict"))
@@ -23,7 +23,7 @@ app = FastAPI()
 
 
 def get_chat_info(
-    data: str,
+    data: ChatData,
 ) -> ChatInfo:
     try:
         return chat_authenticator(data)

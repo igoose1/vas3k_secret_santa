@@ -4,7 +4,8 @@ from motor.motor_asyncio import AsyncIOMotorDatabase
 
 from sesanta.bot.filters.serving_status import ServingStatusFilter
 from sesanta.services.user_getter import UserGetter
-from sesanta.settings import ServingStatus, settings
+from sesanta.serving_status import ServingStatus
+from sesanta.settings import settings
 from sesanta.utils.chat_auth import ChatAuthenticator
 
 router = Router()
@@ -28,21 +29,25 @@ async def handler(
         )
         return
     content = []
-    with_santa = chat_authenticator.generate(
-        user.slug,
-        user.santa,
-        santa=user.santa,
-        expire_in=settings.chats_expire_in,
+    with_santa = settings.chats_full_url_for(
+        chat_authenticator.generate(
+            user.slug,
+            user.santa,
+            santa=user.santa,
+            expire_in=settings.chats_expire_in,
+        ),
     )
     content.append(
         f'Ссылка для <a href="{with_santa}">чата с Сантой</a>',
     )
     for grandchild in user.grandchildren:
-        with_grandchild = chat_authenticator.generate(
-            user.slug,
-            grandchild,
-            santa=user.slug,
-            expire_in=settings.chats_expire_in,
+        with_grandchild = settings.chats_full_url_for(
+            chat_authenticator.generate(
+                user.slug,
+                grandchild,
+                santa=user.slug,
+                expire_in=settings.chats_expire_in,
+            ),
         )
         content.append(
             f'Ссылка для <a href="{with_grandchild}">чата с {grandchild}</a>',

@@ -1,6 +1,7 @@
 import datetime
+from urllib.parse import urljoin
 
-from pydantic import MongoDsn
+from pydantic import HttpUrl, MongoDsn
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from sesanta.serving_status import ServingStatus
@@ -13,8 +14,12 @@ class Settings(BaseSettings):
 
     chats_host: str
     chats_port: int
+    chats_full_url: HttpUrl
     chats_workers: int = 4
     chats_expire_in: datetime.timedelta = datetime.timedelta(hours=12)
+
+    def chats_full_url_for(self, data: str) -> str:
+        return urljoin(str(self.chats_full_url), f"/c/{data}/")
 
     bot_token: str
 
