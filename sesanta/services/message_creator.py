@@ -20,7 +20,7 @@ class MessageCreator:
         text: str,
         link_to_read: str,
     ) -> None:
-        """Writes a new messages and notifies a receiver in Telegram."""
+        """Writes a new message and notifies a receiver in Telegram."""
         receiver_user = await self.users.get({"slug": created_from_chat_info.they})
         if receiver_user is None:
             msg = "user wasn't found in db"

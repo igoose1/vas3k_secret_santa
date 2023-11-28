@@ -28,7 +28,7 @@ async def handler(
             f"Думаешь, это ошибка? Отпишись под постом: {settings.club_post_link}",
         )
         return
-    content = []
+    paragraphs = []
     with_santa = settings.chats_full_url_for(
         chat_authenticator.generate(
             user.slug,
@@ -37,8 +37,8 @@ async def handler(
             expire_in=settings.chats_expire_in,
         ),
     )
-    content.append(
-        f'Ссылка для <a href="{with_santa}">чата с Сантой</a>',
+    paragraphs.append(
+        f'Ссылка для <a href="{with_santa}">чата с Сантой</a>.',
     )
     for grandchild in user.grandchildren:
         with_grandchild = settings.chats_full_url_for(
@@ -49,9 +49,9 @@ async def handler(
                 expire_in=settings.chats_expire_in,
             ),
         )
-        content.append(
-            f'Ссылка для <a href="{with_grandchild}">чата с {grandchild}</a>',
+        paragraphs.append(
+            f'Ссылка для <a href="{with_grandchild}">чата с {grandchild}</a>.',
         )
     await message.answer(
-        "\n\n".join(content),
+        "\n\n".join(paragraphs),
     )
