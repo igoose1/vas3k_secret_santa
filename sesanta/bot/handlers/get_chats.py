@@ -52,6 +52,11 @@ async def handler(
         paragraphs.append(
             f'Ссылка для <a href="{with_grandchild}">чата с {grandchild}</a>.',
         )
+
+    paragraphs.append(
+        "Не делитесь этим сообщением. Чтобы было безопаснее, эти ссылки временные. "
+        "Чтобы получить новые, просто отправьте еще одно сообщение боту.",
+    )
     await message.answer(
         "\n\n".join(paragraphs),
     )
