@@ -7,6 +7,7 @@ from fastapi import Depends, FastAPI, Form, HTTPException, Request, status
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from motor.motor_asyncio import AsyncIOMotorClient
+from starlette.exceptions import HTTPException as StarletteHTTPException
 from starlette.templating import _TemplateResponse
 
 from sesanta.db.collections.messages import MessageCollection
@@ -22,6 +23,21 @@ bot = AiogramBot(settings.bot_token, parse_mode=ParseMode.HTML)
 app = FastAPI()
 
 
+@app.exception_handler(StarletteHTTPException)
+async def http_exception_handler(
+    request: Request,
+    exc: StarletteHTTPException,
+) -> _TemplateResponse:
+    return templates.TemplateResponse(
+        "error.html",
+        {
+            "request": request,
+            "detail": exc.detail,
+        },
+        status_code=exc.status_code,
+    )
+
+
 def get_chat_info(
     data: ChatData,
 ) -> ChatInfo:
@@ -30,12 +46,12 @@ def get_chat_info(
     except ExpiredError:
         raise HTTPException(
             status.HTTP_401_UNAUTHORIZED,
-            "Ссылка истекла",
+            "Ссылка истекла. Напиши боту любое сообщение и получи новую.",
         )
     except ValueError:
         raise HTTPException(
             status.HTTP_403_FORBIDDEN,
-            "Сюда нельзя",
+            "Сюда нельзя. Напиши боту любое сообщение и получи правильную ссылку.",
         )
 
 
