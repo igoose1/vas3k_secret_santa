@@ -1,8 +1,14 @@
 import datetime
+import enum
 
 import pydantic
 
 from sesanta.db.schemas.base import AbstractSchema
+
+
+class DeliveryStatus(enum.StrEnum):
+    NOT_SENT = enum.auto()
+    SENT = enum.auto()
 
 
 class UserSetCompletenessSchema(AbstractSchema):
@@ -34,12 +40,17 @@ class UserSetSantaSchema(AbstractSchema):
     santa: str | None = None
 
 
+class UserSetDeliveryStatusSchema(AbstractSchema):
+    delivery_status: DeliveryStatus = DeliveryStatus.NOT_SENT
+
+
 class UserSchema(
     UserCreateSchema,
     UserSetEligibilitySchema,
     UserSetLocationSchema,
     UserFillAddressSchema,
     UserSetSantaSchema,
+    UserSetDeliveryStatusSchema,
 ):
     selected_countries: set[str] = pydantic.Field(default_factory=set)
     grandchildren: list[str] = pydantic.Field(default_factory=list)

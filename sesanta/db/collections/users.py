@@ -3,10 +3,12 @@ from typing import Any, ClassVar
 
 from sesanta.db.collections.base import AbstractCollection
 from sesanta.db.schemas.users import (
+    DeliveryStatus,
     UserCreateSchema,
     UserFillAddressSchema,
     UserSchema,
     UserSetCompletenessSchema,
+    UserSetDeliveryStatusSchema,
     UserSetEligibilitySchema,
     UserSetLocationSchema,
     UserSetSantaSchema,
@@ -139,6 +141,16 @@ class UserCollection(AbstractCollection):
     ) -> None:
         await self.collection.delete_one(
             {"telegram_id": telegram_id},
+        )
+
+    async def set_delivery_status(
+        self,
+        telegram_id: int,
+        delivery_status: DeliveryStatus,
+    ) -> None:
+        await self.collection.update_one(
+            {"telegram_id": telegram_id},
+            {"$set": UserSetDeliveryStatusSchema(delivery_status=delivery_status).dict()},
         )
 
     async def clear_santa_information(
