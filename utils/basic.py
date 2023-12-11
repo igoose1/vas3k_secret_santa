@@ -1,5 +1,7 @@
 import pydantic
 
+from sesanta.db.schemas.users import DeliveryStatus
+
 
 class User(pydantic.BaseModel):
     slug: str
@@ -10,3 +12,4 @@ class User(pydantic.BaseModel):
     is_completed: bool
     santa: str | None
     grandchildren: list[str]
+    delivery_status: DeliveryStatus

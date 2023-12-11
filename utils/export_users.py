@@ -45,6 +45,7 @@ async def main(
                 is_completed=user.is_completed,
                 santa=user.santa,
                 grandchildren=user.grandchildren,
+                delivery_status=user.delivery_status,
             ),
         )
 
