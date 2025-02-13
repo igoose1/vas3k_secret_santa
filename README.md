@@ -1,3 +1,8 @@
+Secret Santa is no longer updated as the FOSS project. You can download, edit and do what
+you want according to the license with this version of code.
+
+---
+
 Secret Santa registration for [vas3k.club](https://vas3k.club).
 
 With this project you can:
